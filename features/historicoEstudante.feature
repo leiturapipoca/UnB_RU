@@ -15,3 +15,4 @@ Funcionalidade: Exportação em PDF do Histórico do Estudante
         Dado que o estudante acessou o histórico sem nenhuma refeição registrada
         Quando ele clica no botão "Exportar"
         Então o sistema deve bloquar a geração do arquivo
+        E uma mensagem deve informar "Nenhum registro no histórico"

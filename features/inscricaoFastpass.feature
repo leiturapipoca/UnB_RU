@@ -14,3 +14,4 @@ Funcionalidade: Inscrição Única no FastPass
         Dado que o estudante já se inscreveu em um time-frame para o turno "Almoço"
         Quando o estudante tentar selecionar um novo time-frame
         Então nenhuma opção de time-frame deve estar disponível
+        E uma mensagem deve informar "Inscrição já realizada"
