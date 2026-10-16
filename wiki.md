@@ -36,11 +36,22 @@ UnB_RU
  ┃ ┃ ┗ .gitkeep
  ┃ ┣ support/
  ┃ ┃ ┗ env.rb
+ ┃ ┣ autenticacaoDoFuncionario.feature
+ ┃ ┣ cadastro.feature
+ ┃ ┣ cardapio.feature
+ ┃ ┣ configuracaoDePontoDeAcesso.feature
+ ┃ ┣ exportacaoEmPDF.feature
  ┃ ┣ extrato.feature
+ ┃ ┣ gestaoDeRestaurantes.feature
+ ┃ ┣ gestaoDeTurnos.feature
  ┃ ┣ historicoEstudante.feature
+ ┃ ┣ historicoLocalDaCatraca.feature
  ┃ ┣ inscricaoFastpass.feature
+ ┃ ┣ notificacao.feature
  ┃ ┣ recargaSaldo.feature
- ┃ ┗ relatorioGlobal.feature
+ ┃ ┣ relatorioGlobal.feature
+ ┃ ┣ validacaoDeEntrada.feature
+ ┃ ┗ validacaoRigorosa.feature
  ┣ scripts/
  ┃ ┗ create_users.rb
  ┣ cardapio.json
