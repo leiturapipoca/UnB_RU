@@ -1,4 +1,13 @@
 # Wiki da Sprint 1
+Guilherme Silva Cavalcante - 242001508
+Rafael Mileo Moreira Krauss Guimarães - 242024763
+Artur Nunes de Souza - 241002485
+Filipe Nobre Nunes - 242023523
+
+
+PO: Filipe Nobre Nunes
+Scrum Master: Guilherme Silva Cavalcante
+
 
 ## Objetivos da Sprint
 A sprint teve como foco o estudo e a documentação das histórias de usuário e a especificação de cenários BDD. Foi feito:
@@ -8,6 +17,7 @@ A sprint teve como foco o estudo e a documentação das histórias de usuário e
 - Criação da Wiki.
 - Criação de uma tag de *release* associada ao Pull Request de entrega.
 
+. Nenhuma feature foi desenvolvida e as regras de negócio serão abordadas mais a fundo quando desenvolvermos os TDD's. O foco principal dessa sprint foi a criação dos BDD' s:
 ## Histórias de Usuário:
 **Issue #1** (Cadastro de Usuários): [`features/cadastro.feature`](https://github.com/neatzzy/UnB_RU/issues/1)
 **Issue #2** (Recarga de Saldo): [`features/recargaSaldo.feature`](https://github.com/neatzzy/UnB_RU/issues/2)
@@ -26,6 +36,7 @@ A sprint teve como foco o estudo e a documentação das histórias de usuário e
 **Issue #16** (Validação Rigorosa FastPass): [`features/validacaoRigorosa.feature`](https://github.com/neatzzy/UnB_RU/issues/16)
 **Issue #17** (Gestão de Turnos e Time Frames): [`features/gestaoDeTurnos.feature`](https://github.com/neatzzy/UnB_RU/issues/17)
 
+. Como essa ainda é a etapa inicial do projeto, decidimos não delegar um conjunto de features relacionadas para nenhum membro específico. Na verdade, decidimos dar pelo menos uma feature de cada escopo do projeto para cada participante. Desse modo, para a criação de um BDD de uma feature que está envolvida com múltiplas histórias de usuário, o membro deveria checar os BDD's dos outros para garantir coesão, sendo esse o método de revisão para essa etapa inicial. Dado a simplicidade da tarefa, decidimos adotar o método trunk based development para o versionamento. O padrão de commit usado  foi
 
 ## Árvore do Projeto
 
