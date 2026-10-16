@@ -8,21 +8,21 @@ Funcionalidade: Cadastro de Usuário
 
     Cenário: Cadastro bem sucedido
         Dado que o estudante forneceu sua matrícula, seu nome e sua senha
-	Quando ele tenta criar o cadastro
-	Então ele vê "Usuário cadastrado com sucesso"
-	E sua conta do RU é criada 
+		Quando ele tenta criar o cadastro
+		Então ele vê "Usuário cadastrado com sucesso"
+		E sua conta do RU é criada 
 
     Cenário: Tentativa de cadastro com campos vazios
         Dado que o estudante não preencheu nenhum campo
-	Quando ele tenta criar o cadastro
-	Então ele vê "Preencha todos os campos"
+		Quando ele tenta criar o cadastro
+		Então ele vê "Preencha todos os campos"
 
     Cenário: Tentativa de cadastro com matrícula inválida
-	Dado que o estudante forneceu uma matrícula inválida
-	Quando ele tenta criar o cadastro
-	Então ele vê as regras de preenchimento
+		Dado que o estudante forneceu uma matrícula inválida
+		Quando ele tenta criar o cadastro
+		Então ele vê as regras de preenchimento
     
     Cenário: Tentativa de cadastro com matrícula já registrada
-   	Dado que o estudante forneceu uma matrícula já registrada
-	Quando ele tenta criar o cadastro
-	Então ele vê "Estudante já cadastrado"
+   		Dado que o estudante forneceu uma matrícula já registrada
+		Quando ele tenta criar o cadastro
+		Então ele vê "Estudante já cadastrado"
