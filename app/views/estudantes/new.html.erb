@@ -1,0 +1,30 @@
+<h1>Cadastro de Estudante</h1>
+
+<!-- Exibe as mensagens do Flash (notice para sucesso, alert para erros)[cite: 608] -->
+<% if flash[:notice] %>
+  <div id="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div id="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<!-- Gera a tag <form> apontando para a ação CREATE do controller[cite: 601] -->
+<%= form_with model: @estudante, local: true do |f| %>
+  <div>
+    <%= f.label :matricula, "Matrícula" %>
+    <%= f.text_field :matricula %>
+  </div>
+
+  <div>
+    <%= f.label :nome, "Nome" %>
+    <%= f.text_field :nome %>
+  </div>
+
+  <div>
+    <%= f.label :senha_hash, "Senha" %>
+    <%= f.password_field :senha_hash %>
+  </div>
+
+  <%= f.submit "Cadastrar" %>
+<% end %>

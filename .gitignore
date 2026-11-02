@@ -1,0 +1,36 @@
+# Logs
+/log/*
+!/log/.keep
+
+# Arquivos temporários
+/tmp/*
+!/tmp/.keep
+
+# Armazenamento local
+/storage/*
+!/storage/.keep
+
+# Dependências instaladas localmente
+/vendor/bundle
+
+# Ruby
+*.gem
+
+# Arquivos de ambiente e credenciais
+.env
+.env.*
+!.env.example
+/config/master.key
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Arquivos de backup
+*.bak
+*.orig
+*.swp

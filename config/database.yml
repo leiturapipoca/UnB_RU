@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: localhost
+  port: 5432
+  username: postgres
+  password: <%= ENV.fetch("DB_PASSWORD", "postgres") %>
+
+development:
+  <<: *default
+  database: unb_ru_development
+
+test:
+  <<: *default
+  database: unb_ru_test
+
+production:
+  primary:
+    <<: *default
+    database: unb_ru_production
+  cache:
+    <<: *default
+    database: unb_ru_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: unb_ru_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: unb_ru_production_cable
+    migrations_paths: db/cable_migrate
