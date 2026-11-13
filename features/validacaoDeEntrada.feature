@@ -1,5 +1,4 @@
 # language: pt
-
 Funcionalidade: Validação de Entrada (MVP)
     Como funcionário do restaurante,
     eu quero que o sistema valide a entrada dos clientes na catraca,

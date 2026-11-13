@@ -1,6 +1,6 @@
 # language: pt
 
-Funcionalidade: Cardápio da refeição atual 
+Funcionalidade: Cardápio da refeição atual
     Como estudante
     Eu quero poder ver o cardápio da refeição que esteja sendo servida agora. Incluindo as opções padrão, ovolactovegetariano e
     vegetariano estrito.
