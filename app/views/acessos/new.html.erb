@@ -1,24 +1,24 @@
 <h1>Validação de Catraca</h1>
 
-<% if flash[:notice] %>
-  <div class="status-liberada" style="color: green; font-weight: bold; margin-bottom: 20px;">
-    <%= flash[:notice] %>
+<div data-controller="catraca">
+  <!-- Essa div vai receber as mensagens injetadas pelo JavaScript -->
+  <div data-catraca-target="mensagem">
+    <% if flash[:notice] %>
+      <div style="color: green; font-weight: bold; margin-bottom: 20px;"><%= flash[:notice] %></div>
+    <% end %>
+    <% if flash[:alert] %>
+      <div style="color: red; font-weight: bold; margin-bottom: 20px;"><%= flash[:alert] %></div>
+    <% end %>
   </div>
-<% end %>
 
-<% if flash[:alert] %>
-  <div class="status-bloqueada" style="color: red; font-weight: bold; margin-bottom: 20px;">
-    <%= flash[:alert] %>
-  </div>
-<% end %>
-
-<%= form_with url: catraca_validacao_path, local: true do |f| %>
-  <div>
-    <%= f.label :identificacao, "Passe a Identificação (Matrícula):" %>
-    <%= f.text_field :identificacao, autofocus: true %>
-  </div>
-  
-  <div style="margin-top: 10px;">
-    <%= f.submit "Validar" %>
-  </div>
-<% end %>
+  <%= form_with url: catraca_validacao_path, local: true, data: { action: "submit->catraca#validar" } do |f| %>
+    <div>
+      <%= f.label :identificacao, "Passe a Identificação (Matrícula):" %>
+      <%= f.text_field :identificacao, autofocus: true, data: { catraca_target: "identificacao" } %>
+    </div>
+    
+    <div style="margin-top: 10px;">
+      <%= f.submit "Validar" %>
+    </div>
+  <% end %>
+</div>

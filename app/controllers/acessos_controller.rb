@@ -4,6 +4,41 @@ class AcessosController < ApplicationController
     # Renderiza a tela aguardando a leitura do cartão/matrícula
   end
 
+  def sincronizar
+    acessos_pendentes = params[:acessos] || []
+    
+    sessao = SessaoOperacao.where(encerrada_em: nil).first
+    turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", Time.current.strftime("%H:%M:%S"), Time.current.strftime("%H:%M:%S")).first
+    
+    if sessao.present? && turno.present?
+      acessos_pendentes.each do |matricula|
+        estudante = Estudante.find_by(matricula: matricula)
+        next unless estudante
+        
+        # Registra o acesso atrasado marcando a hora em que foi sincronizado
+        begin
+          Acesso.create(
+            sessao_operacao_id: sessao.id,
+            turno_id: turno.id,
+            estudante_id: estudante.id,
+            identificacao_lida: matricula,
+            data_hora: Time.current, # No mundo real, viria do JS o horário exato do offline
+            modalidade: 'COMUM',
+            resultado: 'LIBERADO',
+            sincronizado_em: Time.current
+          )
+        rescue ActiveRecord::StatementInvalid
+          # Ignora caso a trigger do banco barre (ex: se o cara passou duas vezes offline)
+          next
+        end
+      end
+    end
+
+    render json: { status: 'sucesso', sincronizados: acessos_pendentes.length }
+  end
+
+
+
   def create
     matricula = params[:identificacao]
     estudante = Estudante.find_by(matricula: matricula)
@@ -52,6 +87,9 @@ class AcessosController < ApplicationController
         flash.now[:alert] = "Erro ao processar acesso"
       end
     end
+
+
+        
 
     # Renderiza a mesma tela mostrando a mensagem (flash)
     render :new, status: :unprocessable_entity
