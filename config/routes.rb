@@ -19,10 +19,12 @@ Rails.application.routes.draw do
 
     get 'login', to: 'sessoes#new', as: :login
 
-
     if Rails.env.test? || Rails.env.development?
       get 'test_login/:id', to: 'sessoes#test_login', as: :test_login
     end
+
+    get '/catraca/validacao', to: 'acessos#new', as: 'catraca_validacao'
+    post '/catraca/validacao', to: 'acessos#create'
   end
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
