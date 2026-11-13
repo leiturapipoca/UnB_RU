@@ -1,3 +1,5 @@
+# language: pt
+
 Funcionalidade: Histórico Local da Catraca
     Como operador do sistema
     Eu quero que a catraca armazene os acessos localmente

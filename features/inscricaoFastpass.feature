@@ -1,4 +1,5 @@
 # language: pt
+
 Funcionalidade: Inscrição Única no FastPass
     Como estudante
     Quero me inscrever no sorteio gratuito do FastPass escolhendo apenas um time-frame por turno de refeição
