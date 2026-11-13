@@ -1,4 +1,7 @@
 class EstudantesController < ApplicationController
+  # O cadastro de estudante continua público (não exige login de funcionário)
+  skip_before_action :exigir_login
+
   def new
     @estudante = Estudante.new
   end

@@ -1,0 +1,14 @@
+<h1>Login do Funcionário</h1>
+<%= render "shared/flash" %>
+
+<%= form_with url: login_path do |f| %>
+  <div>
+    <%= f.label :siape, "SIAPE" %>
+    <%= f.text_field :siape %>
+  </div>
+  <div>
+    <%= f.label :senha, "Senha" %>
+    <%= f.password_field :senha %>
+  </div>
+  <%= f.submit "Entrar" %>
+<% end %>

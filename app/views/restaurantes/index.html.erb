@@ -1,0 +1,26 @@
+<h1>Restaurantes e Catracas</h1>
+<%= render "shared/flash" %>
+<%= link_to "Novo restaurante", new_restaurante_path %>
+
+<table>
+  <thead>
+    <tr><th>Nome</th><th>Campus</th><th>Status</th><th>Catracas</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% @restaurantes.each do |r| %>
+      <tr id="restaurante_<%= r.id %>">
+        <td><%= r.nome %></td>
+        <td><%= r.campus.nome %></td>
+        <td><%= r.status.humanize %></td>
+        <td><%= r.catracas.map { |c| "Catraca #{c.numero}" }.join(", ") %></td>
+        <td>
+          <%= link_to "Editar", edit_restaurante_path(r) %>
+          <%= button_to "Remover", restaurante_path(r), method: :delete,
+                form: { style: "display:inline", data: { turbo_confirm: "Remover este restaurante e suas catracas?" } } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Voltar ao painel", root_path %>

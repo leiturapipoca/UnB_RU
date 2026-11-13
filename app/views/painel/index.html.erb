@@ -1,0 +1,18 @@
+<h1>Painel de Controle</h1>
+<%= render "shared/flash" %>
+<p>Bem-vindo(a), <%= funcionario_logado.nome %>.</p>
+
+<% if sessao_operacao_atual %>
+  <p>
+    Ponto de acesso: <%= sessao_operacao_atual.catraca.restaurante.nome %>
+    — catraca <%= sessao_operacao_atual.catraca.numero %>
+  </p>
+<% end %>
+
+<ul>
+  <li><%= link_to "Validar entrada (FastPass)", new_acesso_path %></li>
+  <li><%= link_to "Trocar restaurante/catraca", ponto_acesso_path %></li>
+  <% if funcionario_logado.perfil_administrador? %>
+    <li><%= link_to "Gerenciar restaurantes e catracas", restaurantes_path %></li>
+  <% end %>
+</ul>

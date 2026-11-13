@@ -22,7 +22,8 @@ module UnBRu
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+    config.time_zone = "Brasilia"
+    # Colunas TIME (hora_inicio/hora_fim) ficam como "relógio de parede", sem conversão de fuso
+    config.active_record.time_zone_aware_types = [ :datetime ]
   end
 end

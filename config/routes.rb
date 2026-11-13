@@ -11,4 +11,20 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # Issue 4: autenticação do funcionário
+  get    "login",  to: "sessoes#new",     as: :login
+  post   "login",  to: "sessoes#create"
+  delete "logout", to: "sessoes#destroy", as: :logout
+  root "painel#index"
+
+  # Issue 8: gestão de restaurantes e catracas (administrador)
+  resources :restaurantes, except: :show
+
+  # Issue 5: escolha do restaurante/catraca depois do login
+  get  "ponto-de-acesso", to: "ponto_acesso#new",    as: :ponto_acesso
+  post "ponto-de-acesso", to: "ponto_acesso#create"
+
+  # Issue 16: leitura do passe do FastPass na catraca
+  resources :acessos, only: %i[new create]
 end

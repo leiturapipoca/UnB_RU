@@ -1,0 +1,10 @@
+<h1>Validar entrada</h1>
+<%= render "shared/flash" %>
+
+<%= form_with url: acessos_path do %>
+  <%= label_tag :codigo_passe, "Código do passe" %>
+  <%= text_field_tag :codigo_passe %>
+  <%= submit_tag "Validar entrada" %>
+<% end %>
+
+<%= link_to "Voltar ao painel", root_path %>
