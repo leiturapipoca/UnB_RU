@@ -1,0 +1,32 @@
+<h1>Extrato e Histórico</h1>
+
+<% if @movimentacoes.empty? %>
+  <p>Nenhuma movimentação encontrada</p>
+<% else %>
+  <div class="resumo">
+    <p><strong>Total Recarregado:</strong> <%= number_to_currency(@total_recarregado) %></p>
+    <p><strong>Total Gasto:</strong> <%= number_to_currency(@total_gasto) %></p>
+    <p><strong>Quantidade de Refeições:</strong> <%= @quantidade_refeicoes %></p>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Data</th>
+      <th>Tipo</th>
+      <th>Descrição</th>
+      <th>Valor</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @movimentacoes.each do |movimentacao| %>
+      <tr>
+        <td><%= movimentacao.data_hora.strftime("%d/%m/%Y %H:%M") %></td>
+        <td><%= movimentacao.tipo %></td>
+        <td><%= movimentacao.descricao %></td>
+        <td><%= number_to_currency(movimentacao.valor) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
