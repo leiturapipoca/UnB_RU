@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     get 'login', to: 'sessoes#new', as: :login
 
 
-    if Rails.env.test?
+    if Rails.env.test? || Rails.env.development?
       get 'test_login/:id', to: 'sessoes#test_login', as: :test_login
     end
   end
