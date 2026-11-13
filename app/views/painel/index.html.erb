@@ -10,7 +10,8 @@
 <% end %>
 
 <ul>
-  <li><%= link_to "Validar entrada (FastPass)", new_acesso_path %></li>
+  <li><%= link_to "Validar entrada (FastPass)", fastpass_path %></li>
+  <li><%= link_to "Validação de catraca (matrícula)", catraca_validacao_path %></li>
   <li><%= link_to "Trocar restaurante/catraca", ponto_acesso_path %></li>
   <% if funcionario_logado.perfil_administrador? %>
     <li><%= link_to "Gerenciar restaurantes e catracas", restaurantes_path %></li>

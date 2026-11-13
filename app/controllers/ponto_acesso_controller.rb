@@ -1,4 +1,6 @@
 class PontoAcessoController < ApplicationController
+  before_action :exigir_login
+
   def new
     carregar_restaurantes
   end

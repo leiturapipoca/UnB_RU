@@ -1,3 +1,5 @@
+# language: pt
+
 Funcionalidade: Gestão de Turnos e Time-frames (BÔNUS)
     Como gestor do restaurante
     Eu quero configurar os horários de funcionamento dos turnos

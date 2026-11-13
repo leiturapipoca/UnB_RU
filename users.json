@@ -1,0 +1,306 @@
+{
+  "students": [
+    {
+      "matricula": "241005427",
+      "nome": "Ana Nunes Pereira",
+      "senha": "xq9e2Vy3Jj"
+    },
+    {
+      "matricula": "181015997",
+      "nome": "Helena Oliveira Marques",
+      "senha": "oqxU4z1tKh"
+    },
+    {
+      "matricula": "222037601",
+      "nome": "Rafael Almeida Andrade",
+      "senha": "hzOdo8OjKX"
+    },
+    {
+      "matricula": "181099785",
+      "nome": "João Fernandes",
+      "senha": "MZYG0RVXWE"
+    },
+    {
+      "matricula": "241075747",
+      "nome": "Gustavo Barbosa Dias",
+      "senha": "GCSxrCVjCI"
+    },
+    {
+      "matricula": "182088407",
+      "nome": "Carlos Oliveira Mendes",
+      "senha": "wQvkbE3GxH"
+    },
+    {
+      "matricula": "201011363",
+      "nome": "Isabela Rocha",
+      "senha": "uV5G703sXZ"
+    },
+    {
+      "matricula": "201085597",
+      "nome": "Carlos Moreira Lima",
+      "senha": "B6ivekp9l1"
+    },
+    {
+      "matricula": "262064064",
+      "nome": "Amanda Machado",
+      "senha": "Q2NZqc735a"
+    },
+    {
+      "matricula": "171056488",
+      "nome": "Helena Machado",
+      "senha": "vMBirgfkqC"
+    },
+    {
+      "matricula": "261070666",
+      "nome": "João Almeida",
+      "senha": "Xlw79qhRjS"
+    },
+    {
+      "matricula": "241025500",
+      "nome": "Natália Machado Nunes",
+      "senha": "EsFrBSACom"
+    },
+    {
+      "matricula": "191017186",
+      "nome": "Letícia Machado Martins",
+      "senha": "snltGRauFc"
+    },
+    {
+      "matricula": "171051517",
+      "nome": "João Alves Freitas",
+      "senha": "9YwA7s0y9K"
+    },
+    {
+      "matricula": "262059882",
+      "nome": "Gustavo Almeida",
+      "senha": "OproaBFPN0"
+    },
+    {
+      "matricula": "262085018",
+      "nome": "Mateus Carvalho",
+      "senha": "F8p5ZMyvNY"
+    },
+    {
+      "matricula": "191030816",
+      "nome": "Fernanda Pereira",
+      "senha": "u80NQMi2oH"
+    },
+    {
+      "matricula": "251076003",
+      "nome": "Gabriel Gomes",
+      "senha": "0x1CNcORxb"
+    },
+    {
+      "matricula": "191090320",
+      "nome": "Beatriz Silva Andrade",
+      "senha": "eYzmLZBSPT"
+    },
+    {
+      "matricula": "251007418",
+      "nome": "Juliana Nunes Marques",
+      "senha": "toYvIDvONd"
+    },
+    {
+      "matricula": "262077112",
+      "nome": "Helena Silva Lima",
+      "senha": "dz2bhUQsbx"
+    },
+    {
+      "matricula": "201000879",
+      "nome": "Larissa Rodrigues",
+      "senha": "BsYVoHlPU1"
+    },
+    {
+      "matricula": "241061934",
+      "nome": "Fernanda Pereira",
+      "senha": "LHCRrHXoqx"
+    },
+    {
+      "matricula": "191042076",
+      "nome": "João Pereira",
+      "senha": "Xs2Oj6dutj"
+    },
+    {
+      "matricula": "201049015",
+      "nome": "Daniel Lopes",
+      "senha": "26EXBlkyS9"
+    },
+    {
+      "matricula": "211032899",
+      "nome": "Beatriz Ferreira",
+      "senha": "bsHATjkIVp"
+    },
+    {
+      "matricula": "212081979",
+      "nome": "Thiago Ribeiro Barbosa",
+      "senha": "d6FB5ZdiX5"
+    },
+    {
+      "matricula": "241024522",
+      "nome": "Felipe Rodrigues",
+      "senha": "ETgqtuz9vk"
+    },
+    {
+      "matricula": "201009593",
+      "nome": "Igor Dias Carvalho",
+      "senha": "XWQVdz5RGs"
+    },
+    {
+      "matricula": "261095194",
+      "nome": "Thiago Martins Silva",
+      "senha": "udJvZm1dW1"
+    },
+    {
+      "matricula": "252002659",
+      "nome": "Carlos Gomes Nascimento",
+      "senha": "mT6uxKrAUd"
+    },
+    {
+      "matricula": "182007869",
+      "nome": "Carlos Oliveira",
+      "senha": "7NgUZzEAIs"
+    },
+    {
+      "matricula": "181046157",
+      "nome": "Eduardo Mendes Nascimento",
+      "senha": "qWSqlZGlFg"
+    },
+    {
+      "matricula": "241082483",
+      "nome": "Natália Lopes Nascimento",
+      "senha": "ybV0JLduCA"
+    },
+    {
+      "matricula": "251054098",
+      "nome": "Lucas Silva",
+      "senha": "6Fz1Qkcq8q"
+    },
+    {
+      "matricula": "232087591",
+      "nome": "Igor Lopes",
+      "senha": "zCQK3vtObC"
+    },
+    {
+      "matricula": "252073996",
+      "nome": "Daniel Mendes",
+      "senha": "euZiZSNsQB"
+    },
+    {
+      "matricula": "201062424",
+      "nome": "Camila Ribeiro",
+      "senha": "davMq5FRM2"
+    },
+    {
+      "matricula": "261046849",
+      "nome": "Igor Moreira Martins",
+      "senha": "2OXAiS7GW9"
+    },
+    {
+      "matricula": "192021961",
+      "nome": "Letícia Pereira",
+      "senha": "P8MxyK9R4R"
+    },
+    {
+      "matricula": "172067377",
+      "nome": "Igor Pereira",
+      "senha": "h95tEGg0zp"
+    },
+    {
+      "matricula": "192093417",
+      "nome": "Vitória Nascimento",
+      "senha": "lXwsNSRDyo"
+    },
+    {
+      "matricula": "251019439",
+      "nome": "Igor Freitas Costa",
+      "senha": "ixzRWKC9oy"
+    },
+    {
+      "matricula": "241046286",
+      "nome": "Beatriz Dias",
+      "senha": "EBKAc10Uqp"
+    },
+    {
+      "matricula": "232074210",
+      "nome": "Juliana Carvalho Almeida",
+      "senha": "TmcjTYbT7K"
+    },
+    {
+      "matricula": "241081453",
+      "nome": "Patrícia Rodrigues Mendes",
+      "senha": "igwZ6CztKS"
+    },
+    {
+      "matricula": "252039492",
+      "nome": "Gustavo Soares",
+      "senha": "XXiZXzTatt"
+    },
+    {
+      "matricula": "242017304",
+      "nome": "Gabriel Moreira",
+      "senha": "s0FIcEezwS"
+    },
+    {
+      "matricula": "212055527",
+      "nome": "Beatriz Moreira",
+      "senha": "2LwK45oEK6"
+    },
+    {
+      "matricula": "261032265",
+      "nome": "Rafael Carvalho",
+      "senha": "YsBLkpOO7M"
+    }
+  ],
+  "employees": [
+    {
+      "matricula": "5342095",
+      "nome": "Natália Fernandes",
+      "senha": "gcczQhhnRS"
+    },
+    {
+      "matricula": "8132261",
+      "nome": "Bruno Nunes Soares",
+      "senha": "zT0mCrFTv4"
+    },
+    {
+      "matricula": "5661876",
+      "nome": "Amanda Moreira",
+      "senha": "0Er6PQFsCa"
+    },
+    {
+      "matricula": "6891952",
+      "nome": "Gabriel Martins Marques",
+      "senha": "QawssP258X"
+    },
+    {
+      "matricula": "7071443",
+      "nome": "Fernanda Barbosa",
+      "senha": "ZnFTjnYMaS"
+    },
+    {
+      "matricula": "3155104",
+      "nome": "Letícia Nascimento Santos",
+      "senha": "c9yfoZweNq"
+    },
+    {
+      "matricula": "6761944",
+      "nome": "Igor Martins",
+      "senha": "Rs6HJzn7pg"
+    },
+    {
+      "matricula": "5480061",
+      "nome": "Amanda Soares",
+      "senha": "nM2Ptwh5jB"
+    },
+    {
+      "matricula": "0499530",
+      "nome": "Juliana Barbosa Pereira",
+      "senha": "CFcDHgQflm"
+    },
+    {
+      "matricula": "1996605",
+      "nome": "Mateus Santos Andrade",
+      "senha": "rTNe6Pt3l2"
+    }
+  ]
+}

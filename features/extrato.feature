@@ -1,4 +1,5 @@
 # language: pt
+
 Funcionalidade: Visualizar Extrato e Histórico 
     Como estudante
     Eu quero visualizar meu extrato de recargas e histórico de refeições
@@ -7,7 +8,7 @@ Funcionalidade: Visualizar Extrato e Histórico
 
     Cenário: Visualização de extrato bem sucedida
         Dado que o estudante está logado
-	E ele já fez uma recargar
+	E ele já fez uma recarga
         Quando ele tenta acessar a página "Extrato"
 	Então ele deve ver o valor gasto no mês
 	E ele deve ver o valor recarregado

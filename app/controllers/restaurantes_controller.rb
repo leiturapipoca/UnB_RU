@@ -1,5 +1,6 @@
 class RestaurantesController < ApplicationController
-  # Só o administrador cadastra/edita/remove restaurantes (exigir_login já roda antes, no ApplicationController)
+  # Só o administrador cadastra/edita/remove restaurantes (a ordem importa: primeiro o login)
+  before_action :exigir_login
   before_action :exigir_administrador
   before_action :carregar_restaurante, only: %i[edit update destroy]
 

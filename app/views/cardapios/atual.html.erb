@@ -1,0 +1,18 @@
+<% if @cardapio.nil? %>
+  <div class="alert alert-warning">
+    <%= flash[:notice] %>
+  </div>
+<% else %>
+  <h1>Cardápio da Refeição Atual</h1>
+  <div class="menu-items">
+    <ul>
+      <% @itens.each do |item| %>
+        <li>
+
+          <strong><%= item.categoria.titleize %> (<%= item.opcao.titleize %>):</strong>
+          <%= item.descricao %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

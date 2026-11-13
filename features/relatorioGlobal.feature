@@ -1,4 +1,5 @@
 # language: pt
+
 Funcionalidade: Relatório Global de Acessos
     Como administrador
     Eu quero visualizar o histórico completo de todos os acessos do campus, podendo filtrar e agrupar os dados por restaurante e por catraca específica

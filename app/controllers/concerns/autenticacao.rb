@@ -1,8 +1,10 @@
+# Login do funcionário. Esta parte NÃO é obrigatória em todas as páginas: as páginas públicas
+# (cadastro/extrato de estudante, cardápio, catraca) continuam abertas. Cada controller que
+# precisa de funcionário logado declara: before_action :exigir_login
 module Autenticacao
   extend ActiveSupport::Concern
 
   included do
-    before_action :exigir_login
     helper_method :funcionario_logado, :sessao_operacao_atual
   end
 

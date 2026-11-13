@@ -1,3 +1,5 @@
+# language: pt
+
 Funcionalidade: Exportação em PDF do Relatório de Operação
     Como gestor do restaurante
     Eu quero exportar o relatório de histórico em PDF

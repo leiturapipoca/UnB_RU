@@ -1,3 +1,5 @@
+# language: pt
+
 Funcionalidade: Notificação de Sorteio
     Como estudante, 
     Eu quero ser notificado se ganhei ou não o FastPass 1 hora antes do turno, 
