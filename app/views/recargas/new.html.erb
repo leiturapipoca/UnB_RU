@@ -1,0 +1,23 @@
+<h1>Nova Recarga</h1>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<%= form_with model: @recarga, local: true do |f| %>
+  <div>
+    <%= f.label :valor, "Valor" %>
+    <%= f.number_field :valor, step: 0.01, required: true %>
+  </div>
+
+  <div>
+    <p>Método de Pagamento:</p>
+    <%= f.radio_button :metodo_pagamento, 'PIX', id: 'PIX' %>
+    <%= f.label :metodo_pagamento_pix, 'PIX', for: 'PIX' %>
+
+    <%= f.radio_button :metodo_pagamento, 'CARTAO_CREDITO', id: 'CARTAO_CREDITO' %>
+    <%= f.label :metodo_pagamento_cartao, 'Cartão de Crédito', for: 'CARTAO_CREDITO' %>
+  </div>
+
+  <%= f.submit "Gerar Cobrança" %>
+<% end %>

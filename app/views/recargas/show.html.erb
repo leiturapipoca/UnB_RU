@@ -1,0 +1,26 @@
+<h1>Detalhes da Recarga</h1>
+
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<p><strong>Status:</strong> <%= @recarga.status %></p>
+<p><strong>Valor Solicitado:</strong> R$ <%= @recarga.valor %></p>
+<p><strong>Método:</strong> <%= @recarga.metodo_pagamento %></p>
+<p><strong>Código da Transação:</strong> <%= @recarga.codigo_transacao %></p>
+
+<p><strong>Saldo na conta:</strong> <%= current_estudante.saldo %> reais</p>
+
+<% if @recarga.status_pendente? %>
+  <hr>
+  <h3>Simulação de Pagamento (MVP)</h3>
+  
+  <div style="display: flex; gap: 10px;">
+    <%= button_to 'Confirmar Pagamento', confirmar_recarga_path(@recarga), method: :patch %>
+    
+    <%= button_to 'Simular Expiração', expirar_recarga_path(@recarga), method: :patch %>
+  </div>
+<% end %>
