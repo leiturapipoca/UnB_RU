@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   get "historico_refeicoes", to: "estudantes#historico", as: :historico_refeicoes
+  post "historico_refeicoes/exportar", to: "estudantes#exportar_historico", as: :exportar_historico_refeicoes
 
   resources :recargas, only: [ :new, :create, :show ] do
     member do

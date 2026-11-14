@@ -1,68 +1,112 @@
+# frozen_string_literal: true
+
 class EstudantesController < ApplicationController
-  before_action :require_login, only: [:extrato]
+  before_action :definir_estudante_extrato, only: %i[extrato historico exportar_historico]
 
-  def new
-    @estudante = Estudante.new
-  end
+  def historico
+    carregar_dados_extrato
 
-  def create
-    @estudante = Estudante.new(estudante_params)
-
-
-    @estudante.grupo_tarifario = GrupoTarifario.first || GrupoTarifario.create!(nome: 'Grupo I')
-
-
-    if estudante_params.values.any?(&:blank?)
-      flash.now[:alert] = "Preencha todos os campos"
-      render :new, status: :unprocessable_entity
-      return
+    if params[:exportar].present? && @quantidade_refeicoes.zero?
+      flash.now[:alert] = "Nenhum registro no histórico"
     end
 
-
-    unless @estudante.matricula.match?(/\A[0-9]{9}\z/)
-      flash.now[:alert] = "A matrícula deve conter exatamente 9 dígitos numéricos"
-      render :new, status: :unprocessable_entity
-      return
-    end
-
-
-    if @estudante.save
-      flash[:notice] = "Usuário cadastrado com sucesso"
-      redirect_to new_estudante_path
-    else
-
-      if @estudante.errors[:matricula].any?
-        flash.now[:alert] = "Estudante já cadastrado"
-      end
-      render :new, status: :unprocessable_entity
-    end
+    render :extrato
   end
 
   def extrato
-    @estudante = Estudante.find(params[:id])
-    @movimentacoes = Extrato.where(estudante_id: @estudante.id).order(data_hora: :desc)
+    carregar_dados_extrato
 
-    @total_gasto = @movimentacoes.where(tipo: 'REFEICAO').sum(:valor).abs
-    @total_recarregado = @movimentacoes.where(tipo: 'RECARGA').sum(:valor)
-    @quantidade_refeicoes = @movimentacoes.where(tipo: 'REFEICAO').count
+    if params[:exportar].present? && @quantidade_refeicoes.zero?
+      flash.now[:alert] = "Nenhum registro no histórico"
+    end
+  end
+
+  def exportar_historico
+    carregar_dados_extrato
+
+    if @quantidade_refeicoes.zero?
+      redirect_to historico_refeicoes_path, alert: "Nenhum registro no histórico"
+      return
+    end
+
+    if params[:formato].to_s.upcase == "PDF"
+      pdf_conteudo = gerar_pdf_historico(@estudante, @movimentacoes)
+      send_data pdf_conteudo,
+                filename: "extrato_refeicoes.pdf",
+                type: "application/pdf",
+                disposition: "attachment"
+    else
+      redirect_to historico_refeicoes_path, alert: "Formato inválido."
+    end
   end
 
   private
 
-  def require_login
-    unless current_estudante
-      flash[:alert] = "Faça login para visualizar seu extrato"
-      redirect_to login_path
+  def definir_estudante_extrato
+    @estudante = if params[:id].present?
+                   Estudante.find(params[:id])
+    else
+                   current_estudante
     end
+
+    redirect_to login_path, alert: "Faça login para continuar." unless @estudante
   end
 
+  def carregar_dados_extrato
+    @movimentacoes = []
+    @total_recarregado = 0
+    @total_gasto = 0
+    @quantidade_refeicoes = 0
+    return unless @estudante
 
-  def current_estudante
-    @current_estudante ||= Estudante.find_by(id: session[:estudante_id]) if session[:estudante_id]
+    @movimentacoes = Extrato.where(estudante_id: @estudante.id).order(data_hora: :desc).to_a
+    @total_recarregado = @movimentacoes.select { |m| m.tipo == "RECARGA" }.sum(&:valor)
+    @total_gasto = @movimentacoes.select { |m| m.tipo == "REFEICAO" }.sum { |m| m.valor.abs }
+    @quantidade_refeicoes = @movimentacoes.count { |m| m.tipo == "REFEICAO" }
   end
 
+  def gerar_pdf_historico(estudante, movimentacoes)
+    linhas = [
+      "Extrato de Refeicoes - #{estudante.nome} (#{estudante.matricula.strip})",
+      "------------------------------------------------------------"
+    ]
 
-  def estudante_params
-    params.require(:estudante).permit(:matricula, :nome, :senha_hash)
+    movimentacoes.each do |m|
+      data = m.data_hora&.strftime("%d/%m/%Y %H:%M")
+      linhas << "#{data} | #{m.tipo} | #{m.descricao} | R$ #{format('%.2f', m.valor)}"
+    end
+
+    texto_pdf = linhas.map.with_index do |linha, idx|
+      escapado = linha.gsub("\\", "\\\\\\\\").gsub("(", "\\(").gsub(")", "\\)")
+      idx.zero? ? "(#{escapado}) Tj" : "0 -16 Td (#{escapado}) Tj"
+    end.join("\n")
+
+    stream = "BT\n/F1 10 Tf\n40 780 Td\n#{texto_pdf}\nET"
+
+    objetos = [
+      "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj",
+      "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj",
+      "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj",
+      "4 0 obj\n<< /Length #{stream.bytesize} >>\nstream\n#{stream}\nendstream\nendobj",
+      "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj"
+    ]
+
+    pdf = +"%PDF-1.4\n"
+    offsets = [ 0 ]
+
+    objetos.each do |obj|
+      offsets << pdf.bytesize
+      pdf << "#{obj}\n"
+    end
+
+    xref_pos = pdf.bytesize
+    pdf << "xref\n0 #{objetos.size + 1}\n"
+    pdf << "0000000000 65535 f \n"
+    offsets[1..].each do |offset|
+      pdf << "#{format('%010d', offset)} 00000 n \n"
+    end
+
+    pdf << "trailer\n<< /Size #{objetos.size + 1} /Root 1 0 R >>\nstartxref\n#{xref_pos}\n%%EOF"
+    pdf
   end
 end

@@ -1,5 +1,24 @@
 <h1>Extrato e Histórico</h1>
 
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<div>
+  <%= button_to "Exportar Histórico", historico_refeicoes_path, method: :get, params: { exportar: 1 } %>
+
+  <%= form_with url: exportar_historico_refeicoes_path, method: :post, local: true do |f| %>
+    <div>
+      <%= f.label :formato, "Formato" %>
+      <%= f.select :formato, options_for_select([["PDF", "PDF"]], params[:formato]) %>
+    </div>
+
+    <%= f.submit "Confirmar Exportação" %>
+  <% end %>
+</div>
+
+<hr>
+
 <% if @movimentacoes.empty? %>
   <p>Nenhuma movimentação encontrada</p>
 <% else %>

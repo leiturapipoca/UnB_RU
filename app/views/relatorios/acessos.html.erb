@@ -1,0 +1,42 @@
+<h1>Relatório Global de Acessos</h1>
+
+<%= form_with url: relatorio_global_acessos_path, method: :get, local: true do |f| %>
+  <div>
+    <%= f.label :restaurante, "Restaurante" %>
+    <%= f.select :restaurante, options_from_collection_for_select(@restaurantes, :nome, :nome, params[:restaurante]), include_blank: "Selecione..." %>
+  </div>
+
+  <div>
+    <%= f.label :catraca, "Catraca" %>
+    <%= f.select :catraca, options_for_select(@catracas_opcoes, params[:catraca]), include_blank: "Selecione..." %>
+  </div>
+
+  <%= f.submit "Filtrar" %>
+<% end %>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>Estudante</th>
+      <th>Catraca</th>
+      <th>Restaurante</th>
+      <th>Data/Hora</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @acessos.each do |acesso| %>
+      <tr>
+        <td><%= acesso.estudante&.nome %></td>
+        <td><%= acesso.sessao_operacao&.catraca&.descricao %></td>
+        <td><%= acesso.sessao_operacao&.catraca&.restaurante&.nome %></td>
+        <td><%= acesso.data_hora %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if @acessos.empty? %>
+  <p>Nenhum acesso corresponde à busca</p>
+<% end %>

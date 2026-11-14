@@ -1,29 +1,59 @@
 # frozen_string_literal: true
 
-# features/step_definitions/historico_estudante_steps.rb
-
 Dado(/^que o estudante acessa a página de "([^"]*)"$/) do |_pagina|
-  grupo = GrupoTarifario.find_or_create_by!(nome: 'Grupo I', descricao: 'Isento')
+  grupo = GrupoTarifario.find_or_create_by!(nome: 'Grupo I') { |g| g.descricao = 'Isento' }
   @estudante = Estudante.find_or_create_by!(matricula: '242001508') do |e|
     e.nome = 'Guilherme Silva Cavalcante'
     e.senha_hash = 'hash'
     e.grupo_tarifario = grupo
   end
 
-  visit login_path
-  fill_in 'Matrícula', with: @estudante.matricula
-  fill_in 'Senha', with: 'senha_segura_123'
-  click_button 'Entrar'
+  visit test_login_path(@estudante.id)
   visit historico_refeicoes_path
 end
 
 Dado(/^possui registros de refeições no mês atual$/) do
-  Refeicao.create!(
+  campus = Campus.find_or_create_by!(nome: 'Campus Darcy Ribeiro')
+  grupo = @estudante.grupo_tarifario
+
+  turno = Turno.find_or_create_by!(campus: campus, tipo_refeicao: 'ALMOCO') do |t|
+    t.hora_inicio = '11:00'
+    t.hora_fim = '14:00'
+  end
+
+  Tarifa.find_or_create_by!(grupo_tarifario: grupo, tipo_refeicao: 'ALMOCO') do |tf|
+    tf.valor = 0.0
+  end
+
+  restaurante = Restaurante.find_or_create_by!(campus: campus, nome: 'Restaurante 1') do |r|
+    r.piso = 1
+  end
+
+  catraca = Catraca.find_or_create_by!(restaurante: restaurante, numero: 1) do |c|
+    c.descricao = 'Catraca 1'
+  end
+
+  funcionario = Funcionario.find_or_create_by!(siape: '1000001') do |f|
+    f.nome = 'Operador 1'
+    f.senha_hash = 'hash'
+    f.perfil = :operador
+    f.ativo = true
+  end
+
+  sessao = SessaoOperacao.find_by(catraca: catraca, encerrada_em: nil) ||
+           SessaoOperacao.create!(catraca: catraca, funcionario: funcionario, iniciada_em: Time.current)
+
+  Acesso.create!(
+    sessao_operacao: sessao,
+    turno: turno,
     estudante: @estudante,
-    turno: 'Almoço',
-    valor: 0.0,
-    data: Date.current
+    identificacao_lida: @estudante.matricula.strip,
+    data_hora: Time.current,
+    modalidade: :comum,
+    resultado: :liberado,
+    valor_cobrado: 0.0
   )
+
   visit historico_refeicoes_path
 end
 
@@ -42,8 +72,14 @@ Então(/^o sistema deve fazer o download de um arquivo chamado "([^"]*)"$/) do |
 end
 
 Dado(/^que o estudante acessou o histórico sem nenhuma refeição registrada$/) do
-  step %(que o estudante acessa a página de "Histórico de Refeições")
-  Refeicao.where(estudante: @estudante).delete_all
+  grupo = GrupoTarifario.find_or_create_by!(nome: 'Grupo I') { |g| g.descricao = 'Isento' }
+  @estudante = Estudante.find_or_create_by!(matricula: '242009999') do |e|
+    e.nome = 'Estudante Sem Refeicoes'
+    e.senha_hash = 'hash'
+    e.grupo_tarifario = grupo
+  end
+
+  visit test_login_path(@estudante.id)
   visit historico_refeicoes_path
 end
 
