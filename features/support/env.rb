@@ -5,27 +5,24 @@ require "rspec/expectations"
 require "capybara/rails"
 require "capybara/cucumber"
 require 'cucumber/rails'
-# Disponibiliza new_estudante_path e demais rotas nos steps
+require "active_support/testing/time_helpers"
+
+# Disponibiliza new_estudante_path, login_path e demais rotas nos steps
 World(Rails.application.routes.url_helpers)
+# Permite travel_to / travel_back para simular horários
+World(ActiveSupport::Testing::TimeHelpers)
 
-# Limpa os dados de teste antes de cada cenário respeitando a ordem das chaves estrangeiras
+# Limpa os dados de teste antes E depois de cada cenário (assim o RSpec, que roda
+# depois, também encontra o banco vazio).
+# TRUNCATE não dispara o gatilho de imutabilidade de "acessos" (delete_all dispararia);
+# o CASCADE limpa também as tabelas que dependem dessas (sessões, turnos, catracas, recargas...).
+LIMPAR_BANCO = "TRUNCATE campi, funcionarios, grupos_tarifarios, estudantes RESTART IDENTITY CASCADE"
+
 Before do
-  # 1. Apaga a tabela Acesso usando TRUNCATE para burlar a trigger de imutabilidade no ambiente de teste
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE acessos CASCADE")
-  
-  # 2. Apaga as demais tabelas filhas
-  SessaoOperacao.delete_all
-  Turno.delete_all
-  Tarifa.delete_all
-  
-  # 3. Apaga a infraestrutura
-  Catraca.delete_all
-  Restaurante.delete_all
-  Campus.delete_all
-  Funcionario.delete_all
+  ActiveRecord::Base.connection.execute(LIMPAR_BANCO)
+end
 
-  # 4. Apaga dados financeiros e usuários
-  Recarga.delete_all
-  Estudante.delete_all
-  GrupoTarifario.delete_all
+After do
+  travel_back
+  ActiveRecord::Base.connection.execute(LIMPAR_BANCO)
 end

@@ -1,0 +1,22 @@
+<h1>Selecionar restaurante e catraca</h1>
+<%= render "shared/flash" %>
+
+<%= form_with url: ponto_acesso_path do %>
+  <% @restaurantes.each do |restaurante| %>
+    <fieldset>
+      <legend>
+        <%= restaurante.nome %>
+        <% unless restaurante.status_em_operacao? %>
+          (<%= restaurante.status.humanize %>)
+        <% end %>
+      </legend>
+      <% restaurante.catracas.sort_by(&:numero).each do |catraca| %>
+        <div>
+          <%= radio_button_tag :catraca_id, catraca.id, false, id: "catraca_#{catraca.id}" %>
+          <%= label_tag "catraca_#{catraca.id}", "#{restaurante.nome} — Catraca #{catraca.numero}" %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+  <%= submit_tag "Selecionar" %>
+<% end %>

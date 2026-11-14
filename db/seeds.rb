@@ -1,26 +1,61 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+# Dados para usar o sistema em DESENVOLVIMENTO.
+# Rodar com: ruby bin/rails db:seed
+# Pode rodar várias vezes: find_or_create_by! só cria o que ainda não existe
+# (os cardápios são refeitos a cada execução a partir do cardapio_2.json).
 #
-# Example:
+# Logins de teste dos funcionários (senha de todos: senha123):
+#   Administrador  SIAPE 1000001  -> pode gerenciar restaurantes e catracas
+#   Operador       SIAPE 1000002  -> opera a catraca
+
 require 'json'
 
-puts "Limpando registros antigos..."
+# --- Estrutura base ---------------------------------------------------------
+
+campus = Campus.find_or_create_by!(nome: "Darcy Ribeiro")
+
+# Tarifa: quanto cada grupo paga por refeição (a validação do FastPass depende disso)
+grupo = GrupoTarifario.find_or_create_by!(nome: "Grupo I") { |g| g.descricao = "Grupo padrão" }
+{ cafe_da_manha: 2.00, almoco: 5.00, jantar: 5.00 }.each do |refeicao, valor|
+  Tarifa.find_or_create_by!(grupo_tarifario: grupo, tipo_refeicao: refeicao) { |t| t.valor = valor }
+end
+
+# Funcionários (a senha é guardada com hash pelo método Funcionario#senha=)
+[
+  { siape: "1000001", nome: "Administrador RU", perfil: :administrador },
+  { siape: "1000002", nome: "Operador RU", perfil: :operador }
+].each do |dados|
+  Funcionario.find_or_create_by!(siape: dados[:siape]) do |f|
+    f.nome = dados[:nome]
+    f.perfil = dados[:perfil]
+    f.senha = "senha123"
+  end
+end
+
+# Um restaurante com uma catraca para a tela de seleção de ponto de acesso
+restaurante = Restaurante.find_or_create_by!(campus: campus, nome: "RU Darcy") do |r|
+  r.piso = 1
+  r.capacidade_lugares = 300
+end
+restaurante.catracas.find_or_create_by!(numero: 1) { |c| c.descricao = "Entrada principal" }
+
+# --- Turnos e cardápios -----------------------------------------------------
+
+puts "Limpando cardápios antigos..."
 ItemCardapio.delete_all
 Cardapio.delete_all
-Turno.delete_all
-Restaurante.delete_all
-Campus.delete_all
-
-puts "Criando Campus..."
-campus = Campus.create!(nome: 'Darcy Ribeiro')
 
 puts "Criando Turnos..."
+# find_or_create_by!: os turnos podem ter sorteios/acessos ligados, então não são apagados
 turnos = {
-  'cafe_da_manha' => Turno.create!(campus: campus, tipo_refeicao: 'CAFE_DA_MANHA', hora_inicio: '07:00:00', hora_fim: '09:00:00'),
-  'almoco'        => Turno.create!(campus: campus, tipo_refeicao: 'ALMOCO', hora_inicio: '11:00:00', hora_fim: '14:30:00'),
-  'jantar'        => Turno.create!(campus: campus, tipo_refeicao: 'JANTAR', hora_inicio: '17:00:00', hora_fim: '19:30:00')
-}
+  'cafe_da_manha' => ['CAFE_DA_MANHA', '07:00:00', '09:00:00'],
+  'almoco'        => ['ALMOCO',        '11:00:00', '14:30:00'],
+  'jantar'        => ['JANTAR',        '17:00:00', '19:30:00']
+}.transform_values do |tipo, inicio, fim|
+  Turno.find_or_create_by!(campus: campus, tipo_refeicao: tipo) do |t|
+    t.hora_inicio = inicio
+    t.hora_fim = fim
+  end
+end
 
 
 MAPEAMENTO_ITENS = {
@@ -103,6 +138,3 @@ dados_cardapio.each do |dia_nome, refeicoes|
 end
 
 puts "Banco de dados populado com sucesso com #{Cardapio.count} cardápios e #{ItemCardapio.count} itens!"
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end

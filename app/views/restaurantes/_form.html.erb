@@ -1,0 +1,56 @@
+<% if @restaurante.errors.any? %>
+  <div id="alert"><%= @restaurante.errors.full_messages.to_sentence %></div>
+<% end %>
+
+<%= form_with model: @restaurante do |f| %>
+  <div>
+    <%= f.label :campus_id, "Campus" %>
+    <%= f.collection_select :campus_id, Campus.order(:nome), :id, :nome, prompt: "Selecione" %>
+  </div>
+  <div>
+    <%= f.label :nome, "Nome" %>
+    <%= f.text_field :nome %>
+  </div>
+  <div>
+    <%= f.label :piso, "Piso" %>
+    <%= f.number_field :piso %>
+  </div>
+  <div>
+    <%= f.label :capacidade_lugares, "Capacidade de lugares" %>
+    <%= f.number_field :capacidade_lugares %>
+  </div>
+  <div>
+    <%= f.label :status, "Status do restaurante" %>
+    <%= f.select :status, Restaurante.statuses.keys %>
+  </div>
+
+  <h2>Catracas</h2>
+  <%= f.fields_for :catracas do |c| %>
+    <fieldset>
+      <div>
+        <%= c.label :numero, "Número da catraca" %>
+        <%= c.number_field :numero %>
+      </div>
+      <div>
+        <%= c.label :descricao, "Descrição da catraca" %>
+        <%= c.text_field :descricao %>
+      </div>
+      <div>
+        <%= c.label :modo_operacional, "Modo operacional" %>
+        <%= c.select :modo_operacional, Catraca.defined_enums["modo_operacional"].keys %>
+      </div>
+      <div>
+        <%= c.label :status, "Status da catraca" %>
+        <%= c.select :status, Catraca.statuses.keys %>
+      </div>
+      <% if c.object.persisted? %>
+        <div>
+          <%= c.check_box :_destroy %>
+          <%= c.label :_destroy, "Remover esta catraca" %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+
+  <%= f.submit(@restaurante.new_record? ? "Cadastrar" : "Salvar") %>
+<% end %>

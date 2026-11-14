@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Tela principal da aplicação de controle (exige funcionário logado)
+  root "painel#index"
   get "login", to: "sessoes#new", as: :login
+  post   "login",  to: "sessoes#create"
+  delete "logout", to: "sessoes#destroy", as: :logout
 
   if Rails.env.test? || Rails.env.development?
     get "test_login/:id", to: "sessoes#test_login", as: :test_login
@@ -28,9 +32,20 @@ Rails.application.routes.draw do
 
   get "/cardapio/atual", to: "cardapios#atual", as: "cardapio_atual"
 
-  get "/catraca/validacao", to: "acessos#new", as: "catraca_validacao"
-  post "/catraca/validacao", to: "acessos#create"
+  resources :restaurantes, except: :show
+
+  # Issue 5: escolha do restaurante/catraca depois do login
+  get  "ponto-de-acesso", to: "ponto_acesso#new",    as: :ponto_acesso
+  post "ponto-de-acesso", to: "ponto_acesso#create"
+
+  # Validação de entrada comum (matrícula) e sincronização offline da catraca
+  get  "/catraca/validacao",  to: "acessos#new",        as: "catraca_validacao"
+  post "/catraca/validacao",  to: "acessos#create"
   post "/catraca/sincronizar", to: "acessos#sincronizar"
+
+  # Issue 16: leitura do passe do FastPass na catraca
+  get  "/catraca/fastpass", to: "fastpass#new", as: :fastpass
+  post "/catraca/fastpass", to: "fastpass#create"
 
   # Defines the root path route ("/")
   # root "cardapios#atual"

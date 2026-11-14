@@ -24,6 +24,12 @@
   </head>
 
   <body>
+  <% if funcionario_logado %>
+  <header>
+    <strong>Aplicação de Controle</strong> — <%= funcionario_logado.nome %>
+    <%= button_to "Sair", logout_path, method: :delete, form: { style: "display:inline" } %>
+  </header>
+  <% end %>
     <%= yield %>
   </body>
 </html>
