@@ -7,7 +7,7 @@
 <div>
   <%= button_to "Exportar Histórico", historico_refeicoes_path, method: :get, params: { exportar: 1 } %>
 
-  <%= form_with url: exportar_historico_refeicoes_path, method: :post, local: true do |f| %>
+  <%= form_with url: exportar_historico_refeicoes_path, method: :post, data: { turbo: false } do |f| %>
     <div>
       <%= f.label :formato, "Formato" %>
       <%= f.select :formato, options_for_select([["PDF", "PDF"]], params[:formato]) %>
