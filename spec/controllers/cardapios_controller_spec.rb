@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe CardapiosController, type: :controller do
   describe 'GET #atual' do
-
     let(:fake_cardapio) { instance_double('Cardapio') }
 
     it 'chama o método do model que busca a refeição pelo horário' do

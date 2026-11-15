@@ -1,4 +1,4 @@
-ENV['CUCUMBER_OUTPUT_ENCODING'] = 'utf-8'
+ENV["CUCUMBER_OUTPUT_ENCODING"] = "utf-8"
 
 # --- Início da correção para o Ruby 3.2+ ---
 class File
@@ -29,7 +29,7 @@ module Kernel
 end
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 require "bundler/setup" # Set up gems listed in the Gemfile.
-ENV['CUCUMBER_OUTPUT_ENCODING'] = 'utf-8'
+ENV["CUCUMBER_OUTPUT_ENCODING"] = "utf-8"
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 
 require "bundler/setup" # Set up gems listed in the Gemfile.

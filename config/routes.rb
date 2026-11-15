@@ -10,8 +10,8 @@ Rails.application.routes.draw do
  if Rails.env.test? || Rails.env.development?
     get "test_login/:id", to: "sessoes#test_login", as: :test_login
     get "test_login_funcionario/:id", to: "sessoes#test_login_funcionario", as: :test_login_funcionario
-  end
-  
+ end
+
   get "admin_login", to: "sessoes_admin#new", as: :admin_login
 
   resources :estudantes, only: [ :new, :create ] do

@@ -11,7 +11,7 @@ class EstudantesController < ApplicationController
     @estudante = Estudante.new(estudante_params)
 
 
-    @estudante.grupo_tarifario = GrupoTarifario.first || GrupoTarifario.create!(nome: 'Padrão')
+    @estudante.grupo_tarifario = GrupoTarifario.first || GrupoTarifario.create!(nome: "Padrão")
 
 
     if estudante_params.values.all?(&:blank?)
@@ -77,7 +77,6 @@ class EstudantesController < ApplicationController
   end
 
   def definir_estudante_extrato
-
     unless current_estudante
       redirect_to login_path, alert: "Faça login para visualizar seu extrato"
       return

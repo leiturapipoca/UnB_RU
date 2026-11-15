@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Cardapio, type: :model do
@@ -43,7 +44,6 @@ RSpec.describe Cardapio, type: :model do
     end
 
     it 'retorna nil se o horário pesquisado estiver fora de todos os turnos' do
-
       hora_referencia = Time.zone.parse("#{Date.current} 09:00:00")
 
       expect(described_class.refeicao_atual(hora_referencia)).to be_nil

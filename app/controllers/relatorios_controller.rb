@@ -19,7 +19,7 @@ class RelatoriosController < ApplicationController
     end
   end
 
-before_action :require_gestor, only: [:index, :exportar]
+before_action :require_gestor, only: [ :index, :exportar ]
 
   def index
   end
@@ -43,7 +43,7 @@ before_action :require_gestor, only: [:index, :exportar]
           pdf_data = render_to_string(
             pdf: "Relatorio_Operacao_#{Date.current}",
             template: "relatorios/exportar",
-            formats: [:html],
+            formats: [ :html ],
             layout: false
           )
           send_data pdf_data,
@@ -65,5 +65,4 @@ before_action :require_gestor, only: [:index, :exportar]
       redirect_to root_path
     end
   end
-
 end

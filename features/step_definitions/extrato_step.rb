@@ -19,8 +19,6 @@ Dado('que o estudante não está logado') do
     e.grupo_tarifario = @grupo
     e.saldo = 0.0
   end
-
-
 end
 
 Dado('ele já fez uma recarga') do
@@ -35,11 +33,9 @@ Dado('ele já fez uma recarga') do
 end
 
 Dado('não possui recargas') do
-
 end
 
 Dado('não possui consumos') do
-
 end
 
 Quando('ele tenta acessar a página {string}') do |pagina|

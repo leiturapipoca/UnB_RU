@@ -8,5 +8,5 @@ class Estudante < ApplicationRecord
   validates :nome, presence: true, length: { maximum: 120 }
   validates :senha_hash, presence: true, length: { maximum: 255 }
   validates :saldo, numericality: true
-  validates :notificacoes_ativas, inclusion: { in: [true, false] }
+  validates :notificacoes_ativas, inclusion: { in: [ true, false ] }
 end

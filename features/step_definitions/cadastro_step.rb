@@ -1,15 +1,14 @@
 # frozen_string_literal: true
+
 # features/step_definitions/cadastro_usuario_steps.rb
 
 Dado(/^que o estudante está na tela de "Cadastro"$/) do
-
   GrupoTarifario.find_or_create_by!(nome: 'Grupo Padrão', descricao: 'Grupo para testes')
 
   visit new_estudante_path
 end
 
 Dado(/^que o estudante forneceu sua matrícula, seu nome e sua senha$/) do
-
   fill_in 'Matrícula', with: '242001508'
   fill_in 'Nome', with: 'Guilherme Silva Cavalcante'
   fill_in 'Senha', with: 'senha_segura_123'
@@ -49,7 +48,6 @@ Quando(/^ele tenta criar o cadastro$/) do
 end
 
 Então(/^ele vê "([^"]*)"$/) do |mensagem|
-
   expect(page).to have_content(mensagem)
 end
 

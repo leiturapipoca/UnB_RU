@@ -5,7 +5,7 @@ class JanelaFastpass < ApplicationRecord
   validates :hora_inicio, uniqueness: { scope: :turno_id }, presence: true
   validates :hora_fim, presence: true
   validates :cota_vagas, numericality: { greater_than_or_equal_to: 0 }
-  validates :ativa, inclusion: { in: [true, false] }
+  validates :ativa, inclusion: { in: [ true, false ] }
   validate :hora_inicio_menor_que_hora_fim
 
   private

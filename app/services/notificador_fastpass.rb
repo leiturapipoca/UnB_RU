@@ -2,9 +2,8 @@
 
 class NotificadorFastpass
   def self.processar(sorteio)
-
     inscricoes_pendentes = sorteio.inscricoes_fastpass.where(
-      status: ['CONTEMPLADO', 'NAO_CONTEMPLADO'],
+      status: [ "CONTEMPLADO", "NAO_CONTEMPLADO" ],
       notificado_em: nil
     )
 

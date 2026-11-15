@@ -13,22 +13,22 @@
 #
 # config/initializers/inflections.rb
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.irregular 'campus', 'campi'
-  inflect.irregular 'restaurante', 'restaurantes'
-  inflect.irregular 'catraca', 'catracas'
-  inflect.irregular 'grupo_tarifario', 'grupos_tarifarios'
-  inflect.irregular 'tarifa', 'tarifas'
-  inflect.irregular 'estudante', 'estudantes'
-  inflect.irregular 'funcionario', 'funcionarios'
-  inflect.irregular 'recarga', 'recargas'
-  inflect.irregular 'turno', 'turnos'
-  inflect.irregular 'janela_fastpass', 'janelas_fastpass'
-  inflect.irregular 'cardapio', 'cardapios'
-  inflect.irregular 'item_cardapio', 'itens_cardapio'
-  inflect.irregular 'sorteio', 'sorteios'
-  inflect.irregular 'inscricao_fastpass', 'inscricoes_fastpass'
-  inflect.irregular 'sessao_operacao', 'sessoes_operacao'
-  inflect.irregular 'acesso', 'acessos'
+  inflect.irregular "campus", "campi"
+  inflect.irregular "restaurante", "restaurantes"
+  inflect.irregular "catraca", "catracas"
+  inflect.irregular "grupo_tarifario", "grupos_tarifarios"
+  inflect.irregular "tarifa", "tarifas"
+  inflect.irregular "estudante", "estudantes"
+  inflect.irregular "funcionario", "funcionarios"
+  inflect.irregular "recarga", "recargas"
+  inflect.irregular "turno", "turnos"
+  inflect.irregular "janela_fastpass", "janelas_fastpass"
+  inflect.irregular "cardapio", "cardapios"
+  inflect.irregular "item_cardapio", "itens_cardapio"
+  inflect.irregular "sorteio", "sorteios"
+  inflect.irregular "inscricao_fastpass", "inscricoes_fastpass"
+  inflect.irregular "sessao_operacao", "sessoes_operacao"
+  inflect.irregular "acesso", "acessos"
 end
 # These inflection rules are supported but not enabled by default:
 # ActiveSupport::Inflector.inflections(:en) do |inflect|

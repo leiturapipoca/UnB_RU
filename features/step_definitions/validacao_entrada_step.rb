@@ -6,7 +6,7 @@ def setup_infraestrutura_ru
   rest = Restaurante.find_or_create_by!(campus: campus, nome: 'RU Central', piso: 1, capacidade_lugares: 500)
   catraca = Catraca.find_or_create_by!(restaurante: rest, numero: 1, modo_operacional: 'COMUM', status: 'ONLINE')
   func = Funcionario.find_or_create_by!(siape: '1234567', nome: 'Operador', senha_hash: '123', perfil: 'OPERADOR')
-  
+
   agora = Time.current
   Turno.find_or_create_by!(campus: campus, tipo_refeicao: 'ALMOCO') do |t|
     t.hora_inicio = (agora - 1.hour).strftime("%H:%M:%S")
@@ -15,7 +15,7 @@ def setup_infraestrutura_ru
 
   # CORREÇÃO 1: Preenchendo o 'iniciada_em' para passar na validação do Rails
   SessaoOperacao.find_or_create_by!(funcionario: func, catraca: catraca, encerrada_em: nil) do |s|
-    s.iniciada_em = Time.current 
+    s.iniciada_em = Time.current
   end
 end
 
@@ -29,7 +29,7 @@ Dado('que o cliente está com a identificação válida') do
     e.nome = 'Estudante Válido'
     e.senha_hash = 'hash'
     e.grupo_tarifario = @grupo
-    e.saldo = 50.0 
+    e.saldo = 50.0
   end
 end
 

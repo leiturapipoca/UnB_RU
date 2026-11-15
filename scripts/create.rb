@@ -213,7 +213,7 @@ models = {
       end
     end
   RUBY
-  "acesso.rb" => <<~'RUBY',
+  "acesso.rb" => <<~'RUBY'
     class Acesso < ApplicationRecord
       self.table_name = "acessos"
       belongs_to :sessao_operacao

@@ -1,7 +1,6 @@
 require 'json'
 
 Quando('o estudante tenta visualizar o cardápio') do
-
   ItemCardapio.delete_all
   Cardapio.delete_all
   Turno.delete_all
@@ -70,7 +69,6 @@ Então('vê a opção padrão, ovolacovegetariana e vegetariana estrito') do
 end
 
 Dado('que o RU não está no horário de funcionamento') do
-
   ItemCardapio.delete_all
   Cardapio.delete_all
   Turno.delete_all

@@ -18,7 +18,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 gem "fiddle"
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
+ # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
  gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -52,10 +52,10 @@ group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
-  gem 'rails-controller-testing'
+  gem "rails-controller-testing"
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  gem 'cucumber-rails', require: false
+  gem "cucumber-rails", require: false
   gem "rspec-rails", ">= 6.1.0"
   gem "cucumber", require: false
   gem "capybara"
