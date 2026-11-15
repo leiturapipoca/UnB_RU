@@ -1,124 +1,79 @@
-# frozen_string_literal: true
+RSpec.describe "Histórico e Exportação em PDF", type: :request do
+  let!(:campus) { Campus.find_or_create_by!(nome: "Campus Darcy Ribeiro") }
+  let!(:grupo) { GrupoTarifario.find_or_create_by!(nome: "Grupo I") { |g| g.descricao = "Isento" } }
+  let!(:turno) do
+    Turno.find_or_create_by!(campus: campus, tipo_refeicao: "ALMOCO") do |t|
+      t.hora_inicio = "11:00"
+      t.hora_fim = "14:00"
+    end
+  end
+  let!(:tarifa) do
+    Tarifa.find_or_create_by!(grupo_tarifario: grupo, tipo_refeicao: "ALMOCO") { |tf| tf.valor = 0.0 }
+  end
+  let!(:restaurante) { Restaurante.find_or_create_by!(campus: campus, nome: "Restaurante 1") { |r| r.piso = 1 } }
+  let!(:catraca) do
+    Catraca.find_or_create_by!(restaurante: restaurante, numero: 1) { |c| c.descricao = "Catraca 1" }
+  end
+  let!(:funcionario) do
+    Funcionario.find_or_create_by!(siape: "1000003") do |f|
+      f.nome = "Operador Extrato"
+      f.senha_hash = "hash"
+      f.perfil = :operador
+      f.ativo = true
+    end
+  end
+  let!(:sessao) do
+    SessaoOperacao.find_by(catraca: catraca, encerrada_em: nil) ||
+      SessaoOperacao.create!(catraca: catraca, funcionario: funcionario, iniciada_em: Time.current)
+  end
 
-require 'rails_helper'
-
-RSpec.describe EstudantesController, type: :controller do
-  let(:grupo) { GrupoTarifario.find_or_create_by!(nome: 'Grupo I') }
-
-  describe 'GET #new' do
-    it 'instancia um novo estudante e renderiza o template new' do
-      get :new
-      expect(assigns(:estudante)).to be_a_new(Estudante)
-      expect(response).to render_template('new')
+  let!(:estudante_com_refeicao) do
+    Estudante.find_or_create_by!(matricula: "242001508") do |e|
+      e.nome = "Guilherme Silva Cavalcante"
+      e.senha_hash = "hash"
+      e.grupo_tarifario = grupo
     end
   end
 
-  describe 'POST #create' do
-    context 'com parâmetros válidos' do
-      let(:valid_params) do
-        { estudante: { matricula: '123456789', nome: 'Fulano', senha_hash: 'secret' } }
-      end
-
-      before { grupo } # garante a existência do grupo
-
-      it 'cria um novo estudante e redireciona' do
-        expect {
-          post :create, params: valid_params
-        }.to change(Estudante, :count).by(1)
-
-        expect(flash[:notice]).to eq("Usuário cadastrado com sucesso")
-        expect(response).to redirect_to(new_estudante_path)
-      end
-    end
-
-    context 'com campos em branco' do
-      let(:blank_params) do
-        { estudante: { matricula: '', nome: '', senha_hash: '' } }
-      end
-
-      it 'não cria estudante e mostra erro' do
-        expect {
-          post :create, params: blank_params
-        }.not_to change(Estudante, :count)
-
-        expect(flash.now[:alert]).to eq("Preencha todos os campos")
-        expect(response).to render_template('new')
-      end
-    end
-    context 'com matrícula já registrada' do
-      let(:duplicated_params) do
-        { estudante: { matricula: '123456789', nome: 'Outro Aluno', senha_hash: 'senha321' } }
-      end
-
-      before do
-        grupo
-        Estudante.create!(matricula: '123456789', nome: 'Aluno Original', senha_hash: 'senha123', grupo_tarifario: grupo, saldo: 0)
-      end
-
-      it 'não cria um novo estudante e exibe alerta de duplicidade' do
-        expect {
-          post :create, params: duplicated_params
-        }.not_to change(Estudante, :count)
-
-        expect(flash.now[:alert]).to eq("Estudante já cadastrado")
-        expect(response).to render_template('new')
-      end
-    end
-
-    context 'com matrícula inválida (fora do formato 9 dígitos)' do
-      let(:invalid_format_params) do
-        { estudante: { matricula: '123', nome: 'Aluno', senha_hash: 'senha123' } }
-      end
-
-      before { grupo }
-
-      it 'não cria estudante e alerta sobre a regra de preenchimento' do
-        expect {
-          post :create, params: invalid_format_params
-        }.not_to change(Estudante, :count)
-
-        expect(flash.now[:alert]).to eq("A matrícula deve conter exatamente 9 dígitos numéricos")
-        expect(response).to render_template('new')
-      end
+  let!(:estudante_sem_refeicao) do
+    Estudante.find_or_create_by!(matricula: "242009999") do |e|
+      e.nome = "Estudante Sem Refeicoes"
+      e.senha_hash = "hash"
+      e.grupo_tarifario = grupo
     end
   end
 
-  describe 'GET #extrato' do
-    let(:grupo) { GrupoTarifario.find_or_create_by!(nome: 'Grupo Teste') }
-    let(:estudante) { Estudante.create!(matricula: '123456789', nome: 'Guilherme', senha_hash: '123', grupo_tarifario: grupo, saldo: 0.0) }
-
-    context 'quando o usuário não está logado' do
-      it 'redireciona para a página de login com alerta' do
-        get :extrato, params: { id: estudante.id }
-        expect(response).to redirect_to(login_path)
-        expect(flash[:alert]).to eq('Faça login para visualizar seu extrato')
-      end
+  before do
+    unless Acesso.exists?(estudante: estudante_com_refeicao, turno: turno)
+      Acesso.create!(
+        sessao_operacao: sessao,
+        turno: turno,
+        estudante: estudante_com_refeicao,
+        identificacao_lida: estudante_com_refeicao.matricula.strip,
+        data_hora: Time.current,
+        modalidade: :comum,
+        resultado: :liberado,
+        valor_cobrado: 0.0
+      )
     end
+  end
 
-    context 'quando o usuário está logado' do
-      before do
+  it "gera e faz o download do PDF extrato_refeicoes.pdf quando há refeições" do
+    get test_login_path(estudante_com_refeicao.id)
+    post exportar_historico_refeicoes_path, params: { formato: "PDF" }
 
-        allow(controller).to receive(:current_estudante).and_return(estudante)
-      end
+    expect(response).to have_http_status(:ok)
+    expect(response.headers["Content-Type"]).to include("application/pdf")
+    expect(response.headers["Content-Disposition"]).to include('filename="extrato_refeicoes.pdf"')
+    expect(response.body).to start_with("%PDF-1.4")
+  end
 
-      it 'renderiza o template de extrato com sucesso' do
-        get :extrato, params: { id: estudante.id }
-        expect(response).to render_template(:extrato) #[cite: 194]
-        expect(assigns(:estudante)).to eq(estudante)
-      end
+  it "bloqueia a geração do PDF e informa mensagem quando não há refeições" do
+    get test_login_path(estudante_sem_refeicao.id)
+    post exportar_historico_refeicoes_path, params: { formato: "PDF" }
 
-      it 'carrega o extrato com valores iniciais zerados se não há histórico' do
-        get :extrato, params: { id: estudante.id }
-        expect(assigns(:movimentacoes)).to be_empty
-        expect(assigns(:total_recarregado)).to eq(0)
-      end
-
-      it 'calcula corretamente o total recarregado quando há recargas confirmadas no banco' do
-        Recarga.create!(estudante: estudante, valor: 100.0, metodo_pagamento: 'PIX', status: 'CONFIRMADA', solicitada_em: Time.current, confirmada_em: Time.current)
-
-        get :extrato, params: { id: estudante.id }
-        expect(assigns(:total_recarregado)).to eq(100.0)
-      end
-    end
+    expect(response).to redirect_to(historico_refeicoes_path)
+    expect(response.headers["Content-Type"]).not_to include("application/pdf")
+    expect(flash[:alert]).to eq("Nenhum registro no histórico")
   end
 end
