@@ -12,6 +12,8 @@
   </div>
 <% end %>
 
+<span data-pendentes="<%= Array(session[:historico_local]).size %>"></span>
+
 <%= form_with url: catraca_validacao_path, local: true do |f| %>
   <div>
     <%= f.label :identificacao, "Passe a Identificação (Matrícula):" %>

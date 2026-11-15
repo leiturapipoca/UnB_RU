@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 Dado('que a catraca está sem conexão de rede') do
+  page.driver.post(catraca_offline_path)
   visit catraca_validacao_path
-  
-  # Usamos o page.execute_script para injetar JavaScript direto no navegador de teste
-  # Sobrescrevemos a propriedade navigator.onLine para forçar o sistema a achar que caiu a internet
-  page.execute_script("Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });")
 end
 
 Dado('que a catraca está offline') do
@@ -13,36 +10,37 @@ Dado('que a catraca está offline') do
 end
 
 Dado('que a catraca possui registros salvos localmente') do
-  # 1. Configura a infraestrutura no Banco de Dados para que a sincronização funcione
   campus = Campus.find_or_create_by!(nome: 'Darcy Ribeiro')
   rest = Restaurante.find_or_create_by!(campus: campus, nome: 'RU Central', piso: 1, capacidade_lugares: 500)
   catraca = Catraca.find_or_create_by!(restaurante: rest, numero: 1, modo_operacional: 'COMUM', status: 'ONLINE')
   func = Funcionario.find_or_create_by!(siape: '1234567', nome: 'Operador', senha_hash: '123', perfil: 'OPERADOR')
-  
+
   Turno.find_or_create_by!(campus: campus, tipo_refeicao: 'ALMOCO') do |t|
-    t.hora_inicio = (Time.current - 1.hour).strftime("%H:%M:%S")
-    t.hora_fim = (Time.current + 1.hour).strftime("%H:%M:%S")
+    t.hora_inicio = (Time.current - 1.hour).strftime('%H:%M:%S')
+    t.hora_fim = (Time.current + 1.hour).strftime('%H:%M:%S')
   end
 
   SessaoOperacao.find_or_create_by!(funcionario: func, catraca: catraca, encerrada_em: nil) do |s|
-    s.iniciada_em = Time.current 
+    s.iniciada_em = Time.current
   end
 
-  # Cria o aluno
   grupo = GrupoTarifario.find_or_create_by!(nome: 'Estudantes')
+  Tarifa.find_or_create_by!(grupo_tarifario: grupo, tipo_refeicao: 'ALMOCO') { |t| t.valor = 2.50 }
+
   Estudante.find_or_create_by!(matricula: '123456789') do |e|
     e.nome = 'Estudante Teste'
     e.senha_hash = 'hash'
     e.grupo_tarifario = grupo
+    e.saldo = 20.0
   end
 
-  # 2. Injeta um acesso pendente direto no LocalStorage do navegador
-  visit catraca_validacao_path
-  page.execute_script("localStorage.setItem('acessos_offline', JSON.stringify(['123456789']));")
+  step 'que a catraca está sem conexão de rede'
+  fill_in 'Identificação', with: '123456789'
+  click_button 'Validar'
 end
 
 Dado('a identificação não pode ser verificada localmente') do
-  @matricula_invalida = "" # Nosso JS barra matrículas vazias quando está offline
+  @matricula_invalida = ''
 end
 
 Quando('um acesso válido é realizado') do
@@ -56,11 +54,8 @@ Quando('a leitura é realizada') do
 end
 
 Quando('a conexão de rede é reestabelecida') do
-  # Restaura a propriedade para true e dispara o evento 'online' que o nosso Stimulus está escutando
-  page.execute_script("Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });")
-  page.execute_script("window.dispatchEvent(new Event('online'));")
-  
-  sleep 1 # Dá 1 segundo para o fetch (AJAX) ir no backend e voltar
+  page.driver.post(catraca_sincronizar_path)
+  visit catraca_validacao_path
 end
 
 Então('a catraca deve liberar a entrada') do
@@ -68,16 +63,14 @@ Então('a catraca deve liberar a entrada') do
 end
 
 Então('deve salvar o evento no histórico local') do
-  # O evaluate_script roda o JS no navegador e devolve o valor para o Ruby
-  acessos_offline = page.evaluate_script("JSON.parse(localStorage.getItem('acessos_offline')) || []")
-  expect(acessos_offline).to include('123456789')
+  expect(Acesso.count).to eq(0)
+  expect(page).to have_css('[data-pendentes="1"]')
 end
 
 Então('o sistema deve enviar o histórico local para o servidor central') do
-  expect(page).to have_content('Sincronizado com sucesso')
+  expect(Acesso.where(identificacao_lida: '123456789').where.not(sincronizado_em: nil).count).to eq(1)
 end
 
 Então('deve limpar os registros pendentes da memória local') do
-  acessos_offline = page.evaluate_script("localStorage.getItem('acessos_offline')")
-  expect(acessos_offline).to be_nil
+  expect(page).to have_css('[data-pendentes="0"]')
 end

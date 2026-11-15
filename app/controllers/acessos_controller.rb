@@ -4,6 +4,12 @@ class AcessosController < ApplicationController
   def new
   end
 
+  def ativar_offline
+    session[:modo_offline] = true
+    session[:historico_local] = []
+    redirect_to catraca_validacao_path
+  end
+
   def create
     matricula = params[:identificacao].to_s.strip
 
@@ -12,20 +18,20 @@ class AcessosController < ApplicationController
       return
     end
 
-    estudante = Estudante.find_by(matricula: matricula)
-    if estudante.nil?
-      flash.now[:alert] = "Acesso Não Autorizado"
-      render :new, status: :unprocessable_entity
-      return
-    end
-
     sessao = SessaoOperacao.where(encerrada_em: nil).first
     horario_atual = Time.current.strftime("%H:%M:%S")
     turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", horario_atual, horario_atual).first
 
-    if turno.nil? || sessao.nil?
+    if turno.nil?
       flash.now[:alert] = "Fora do horário de atendimento"
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
+      return
+    end
+
+    estudante = Estudante.find_by(matricula: matricula)
+    if estudante.nil? || sessao.nil?
+      flash.now[:alert] = "Acesso Não Autorizado"
+      render :new, status: :unprocessable_content
       return
     end
 
@@ -52,7 +58,7 @@ class AcessosController < ApplicationController
       else
         flash.now[:alert] = "Erro ao processar acesso"
       end
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -106,9 +112,9 @@ class AcessosController < ApplicationController
   private
 
   def processar_offline(matricula)
-    if matricula.blank? || session[:falha_validacao_local]
+    if matricula.blank?
       flash.now[:alert] = "Validação indisponível offline"
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
       return
     end
 
