@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ main, sprint_2 ]
 
 jobs:
   scan_ruby:
@@ -84,7 +84,7 @@ jobs:
           DB_PASSWORD: postgres
         run: |
           bin/rails db:create
-          bin/rails db:migrate
+          bin/rails db:structure:load
           bin/rails db:test:prepare
 
       - name: Rodar Testes Unitários (RSpec)
