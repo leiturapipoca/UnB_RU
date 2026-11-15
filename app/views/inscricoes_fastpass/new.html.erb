@@ -1,0 +1,34 @@
+<h1>Nova Inscrição no FastPass</h1>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<% if @ja_inscrito %>
+  <p>Inscrição já realizada</p>
+<% elsif @sorteios.empty? %>
+  <p>Nenhum sorteio aberto no momento.</p>
+<% else %>
+  <% opcoes_turnos = @sorteios.map { |s| [InscricoesFastpassController::TURNO_LABELS[s.turno.tipo_refeicao] || s.turno.tipo_refeicao, s.id] } %>
+  <% opcoes_janelas = @janelas.map { |j| ["#{j.hora_inicio.strftime('%H:%M')} - #{j.hora_fim.strftime('%H:%M')}", j.id] } %>
+
+  <%= form_with model: @inscricao, url: inscricoes_fastpass_path, data: { turbo: false } do |f| %>
+    <div>
+      <%= f.label :sorteio_id, "Turno" %>
+      <%= f.select :sorteio_id, options_for_select(opcoes_turnos, @sorteio_selecionado&.id) %>
+    </div>
+
+    <% if opcoes_janelas.any? %>
+      <div>
+        <%= f.label :janela_fastpass_id, "Time-frame" %>
+        <%= f.select :janela_fastpass_id, options_for_select(opcoes_janelas, @inscricao.janela_fastpass_id) %>
+      </div>
+
+      <%= f.submit "Confirmar Inscrição" %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<p>
+  <%= link_to "Voltar para Minhas Inscrições", inscricoes_fastpass_path %>
+</p>
