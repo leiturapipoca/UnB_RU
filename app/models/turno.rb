@@ -3,6 +3,13 @@
 class Turno < ApplicationRecord
   belongs_to :campus
   has_many :acessos
+  has_many :janelas_fastpass, class_name: "JanelaFastpass", dependent: :destroy
+
+  enum :tipo_refeicao, {
+    cafe_da_manha: "CAFE_DA_MANHA",
+    almoco: "ALMOCO",
+    jantar: "JANTAR"
+  }
 
   validates :tipo_refeicao, :hora_inicio, :hora_fim, presence: true
   validate :hora_inicio_menor_que_hora_fim
