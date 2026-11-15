@@ -7,10 +7,11 @@ Rails.application.routes.draw do
   post   "login",  to: "sessoes#create"
   delete "logout", to: "sessoes#destroy", as: :logout
 
-  if Rails.env.test? || Rails.env.development?
+ if Rails.env.test? || Rails.env.development?
     get "test_login/:id", to: "sessoes#test_login", as: :test_login
+    get "test_login_funcionario/:id", to: "sessoes#test_login_funcionario", as: :test_login_funcionario
   end
-
+  
   get "admin_login", to: "sessoes_admin#new", as: :admin_login
 
   resources :estudantes, only: [ :new, :create ] do

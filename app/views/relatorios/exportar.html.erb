@@ -1,0 +1,23 @@
+<h1>Relatório de Movimentações</h1>
+<p>Período: <%= params[:data_inicio] %> a <%= params[:data_fim] %></p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Data/Hora</th>
+      <th>Matrícula</th>
+      <th>Modalidade</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @movimentacoes.each do |mov| %>
+      <tr>
+        <td><%= mov.data_hora.strftime("%d/%m/%Y %H:%M") %></td>
+        <td><%= mov.identificacao_lida %></td>
+        <td><%= mov.modalidade %></td>
+        <td><%= mov.resultado %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

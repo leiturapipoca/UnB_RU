@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
 Dado('que o gestor está logado') do
-  @gestor = Funcionario.find_or_create_by!(siape: '1234567') do |f|
-    f.nome = 'Gestor Teste'
+  @gestor = Funcionario.find_or_create_by!(siape: '1111111') do |f|
+    f.nome = 'Gestor Chefe'
     f.senha_hash = 'hash'
     f.perfil = 'GESTOR'
     f.ativo = true
   end
-  visit '/login'
-  fill_in 'SIAPE', with: @gestor.siape
-  fill_in 'Senha', with: 'senha_secreta'
-  click_button 'Entrar'
+
+  visit test_login_funcionario_path(@gestor.id)
 end
 
 Dado('informa horários válidos para o turno') do
