@@ -1,0 +1,40 @@
+<h1>Minhas Inscrições FastPass</h1>
+
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<p>
+  <%= link_to "Nova Inscrição FastPass", nova_inscricao_fastpass_path %>
+</p>
+
+<% if @inscricoes.empty? %>
+  <p>Nenhuma inscrição encontrada.</p>
+<% else %>
+  <table>
+    <thead>
+      <tr>
+        <th>Turno</th>
+        <th>Data</th>
+        <th>Time-frame</th>
+        <th>Status</th>
+        <th>Código do Passe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @inscricoes.each do |inscricao| %>
+        <tr>
+          <td><%= InscricoesFastpassController::TURNO_LABELS[inscricao.sorteio.turno.tipo_refeicao] || inscricao.sorteio.turno.tipo_refeicao %></td>
+          <td><%= inscricao.sorteio.data.strftime("%d/%m/%Y") %></td>
+          <td><%= "#{inscricao.janela_fastpass.hora_inicio.strftime('%H:%M')} - #{inscricao.janela_fastpass.hora_fim.strftime('%H:%M')}" %></td>
+          <td><%= InscricoesFastpassController::STATUS_LABELS[inscricao.status] || inscricao.status %></td>
+          <td><%= inscricao.codigo_passe || "-" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

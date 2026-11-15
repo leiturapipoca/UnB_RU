@@ -59,4 +59,8 @@ Rails.application.routes.draw do
   # Issue 16: leitura do passe do FastPass na catraca
   get  "/catraca/fastpass", to: "fastpass#new", as: :fastpass
   post "/catraca/fastpass", to: "fastpass#create"
+
+  get  "inscricoes_fastpass",      to: "inscricoes_fastpass#index",  as: :inscricoes_fastpass
+  get  "inscricoes_fastpass/nova", to: "inscricoes_fastpass#new",    as: :nova_inscricao_fastpass
+  post "inscricoes_fastpass",      to: "inscricoes_fastpass#create"
 end

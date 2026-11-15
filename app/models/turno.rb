@@ -1,22 +1,34 @@
+# frozen_string_literal: true
+
 class Turno < ApplicationRecord
-  self.table_name = "turnos"
   belongs_to :campus
-  has_many :janelas_fastpass, dependent: :destroy
-  has_many :cardapios, dependent: :destroy
-  has_many :sorteios, dependent: :destroy
-  has_many :acessos, dependent: :restrict_with_error
-  enum :tipo_refeicao, { cafe_da_manha: "CAFE_DA_MANHA", almoco: "ALMOCO", jantar: "JANTAR" }, prefix: :tipo
-  validates :tipo_refeicao, uniqueness: { scope: :campus_id }
-  validates :tolerancia_atraso_min, numericality: { greater_than_or_equal_to: 0 }
-  validates :antecedencia_min, numericality: { greater_than_or_equal_to: 0 }
-  validates :ativo, :fastpass_habilitado, :trava_pontualidade, inclusion: { in: [true, false] }
-  validates :hora_inicio, :hora_fim, presence: true
+  has_many :acessos
+
+  validates :tipo_refeicao, :hora_inicio, :hora_fim, presence: true
   validate :hora_inicio_menor_que_hora_fim
+  validate :sem_conflito_de_horario
 
   private
+
   def hora_inicio_menor_que_hora_fim
-    if hora_inicio.present? && hora_fim.present? && hora_inicio >= hora_fim
-      errors.add(:hora_inicio, "deve ser anterior à hora_fim")
+    return if hora_inicio.blank? || hora_fim.blank?
+
+    if hora_fim.strftime("%H:%M:%S") <= hora_inicio.strftime("%H:%M:%S")
+      errors.add(:hora_fim, "deve ser posterior à hora de início")
     end
+  end
+
+  def sem_conflito_de_horario
+    return if campus_id.blank? || hora_inicio.blank? || hora_fim.blank?
+
+    inicio_str = hora_inicio.strftime("%H:%M:%S")
+    fim_str = hora_fim.strftime("%H:%M:%S")
+
+    conflito = Turno.where(campus_id: campus_id)
+                    .where.not(id: id)
+                    .where("hora_inicio < ? AND hora_fim > ?", fim_str, inicio_str)
+                    .exists?
+
+    errors.add(:base, "Conflito de horário com turno existente") if conflito
   end
 end

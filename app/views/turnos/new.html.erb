@@ -1,0 +1,26 @@
+<h1>Configurar Turno</h1>
+
+<% if flash[:notice] %>
+  <div style="color: green; font-weight: bold; margin: 10px 0;"><%= flash[:notice] %></div>
+<% end %>
+
+<%= form_with model: @turno, local: true do |f| %>
+  <div>
+    <%= f.label :tipo_refeicao, "Tipo de Refeição" %>
+    <%= f.select :tipo_refeicao, [["Café da Manhã", "CAFE_DA_MANHA"], ["Almoço", "ALMOCO"], ["Jantar", "JANTAR"]] %>
+  </div>
+
+  <div>
+    <%= f.label :hora_inicio, "Hora início" %>
+    <%= f.time_field :hora_inicio %>
+  </div>
+
+  <div>
+    <%= f.label :hora_fim, "Hora fim" %>
+    <%= f.time_field :hora_fim %>
+  </div>
+
+  <div style="margin-top: 10px;">
+    <%= f.submit "Salvar Turno" %>
+  </div>
+<% end %>
