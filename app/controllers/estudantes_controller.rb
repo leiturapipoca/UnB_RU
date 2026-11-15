@@ -3,6 +3,36 @@
 class EstudantesController < ApplicationController
   before_action :definir_estudante_extrato, only: %i[extrato historico exportar_historico]
 
+  def new
+    @estudante = Estudante.new
+  end
+
+  def create
+    @estudante = Estudante.new(estudante_params)
+
+
+    @estudante.grupo_tarifario = GrupoTarifario.first || GrupoTarifario.create!(nome: 'Padrão')
+
+
+    if estudante_params.values.all?(&:blank?)
+      flash.now[:alert] = "Preencha todos os campos"
+      render :new, status: :unprocessable_entity
+      return
+    end
+
+    if @estudante.save
+      redirect_to new_estudante_path, notice: "Usuário cadastrado com sucesso"
+    else
+      if @estudante.errors[:matricula].include?("has already been taken") || @estudante.errors[:matricula].include?("já está em uso")
+        flash.now[:alert] = "Estudante já cadastrado"
+      elsif @estudante.errors[:matricula].include?("is invalid") || @estudante.errors[:matricula].include?("não é válido")
+        flash.now[:alert] = "A matrícula deve conter exatamente 9 dígitos numéricos"
+      end
+
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def historico
     carregar_dados_extrato
 
@@ -42,14 +72,19 @@ class EstudantesController < ApplicationController
 
   private
 
+  def estudante_params
+    params.require(:estudante).permit(:matricula, :nome, :senha_hash)
+  end
+
   def definir_estudante_extrato
-    @estudante = if params[:id].present?
-                   Estudante.find(params[:id])
-    else
-                   current_estudante
+
+    unless current_estudante
+      redirect_to login_path, alert: "Faça login para visualizar seu extrato"
+      return
     end
 
-    redirect_to login_path, alert: "Faça login para continuar." unless @estudante
+
+    @estudante = params[:id].present? ? Estudante.find_by(id: params[:id]) : current_estudante
   end
 
   def carregar_dados_extrato
@@ -58,6 +93,7 @@ class EstudantesController < ApplicationController
     @total_gasto = 0
     @quantidade_refeicoes = 0
     return unless @estudante
+
 
     @movimentacoes = Extrato.where(estudante_id: @estudante.id).order(data_hora: :desc).to_a
     @total_recarregado = @movimentacoes.select { |m| m.tipo == "RECARGA" }.sum(&:valor)

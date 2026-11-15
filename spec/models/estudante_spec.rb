@@ -19,7 +19,20 @@ RSpec.describe Estudante, type: :model do
     it 'é válido com todos os dados corretos' do
       expect(estudante).to be_valid
     end
+    it 'exige que a matrícula tenha exatamente 9 dígitos numéricos' do
 
+      estudante.matricula = '12345678'
+      expect(estudante).not_to be_valid
+      expect(estudante.errors[:matricula]).to be_present
+
+
+      estudante.matricula = '1234567890'
+      expect(estudante).not_to be_valid
+
+
+      estudante.matricula = '12345678A'
+      expect(estudante).not_to be_valid
+    end
     it 'exige matrícula' do
       estudante.matricula = nil
 

@@ -45,6 +45,42 @@ RSpec.describe EstudantesController, type: :controller do
         expect(response).to render_template('new')
       end
     end
+    context 'com matrícula já registrada' do
+      let(:duplicated_params) do
+        { estudante: { matricula: '123456789', nome: 'Outro Aluno', senha_hash: 'senha321' } }
+      end
+
+      before do
+        grupo
+        Estudante.create!(matricula: '123456789', nome: 'Aluno Original', senha_hash: 'senha123', grupo_tarifario: grupo, saldo: 0)
+      end
+
+      it 'não cria um novo estudante e exibe alerta de duplicidade' do
+        expect {
+          post :create, params: duplicated_params
+        }.not_to change(Estudante, :count)
+
+        expect(flash.now[:alert]).to eq("Estudante já cadastrado")
+        expect(response).to render_template('new')
+      end
+    end
+
+    context 'com matrícula inválida (fora do formato 9 dígitos)' do
+      let(:invalid_format_params) do
+        { estudante: { matricula: '123', nome: 'Aluno', senha_hash: 'senha123' } }
+      end
+
+      before { grupo }
+
+      it 'não cria estudante e alerta sobre a regra de preenchimento' do
+        expect {
+          post :create, params: invalid_format_params
+        }.not_to change(Estudante, :count)
+
+        expect(flash.now[:alert]).to eq("A matrícula deve conter exatamente 9 dígitos numéricos")
+        expect(response).to render_template('new')
+      end
+    end
   end
 
   describe 'GET #extrato' do

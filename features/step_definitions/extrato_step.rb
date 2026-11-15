@@ -71,9 +71,6 @@ Então('ele deve ver a mensagem {string}') do |mensagem|
 end
 
 
-Então('deve ver a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
 
 Então('ele deve ser redirecionado para a página de login') do
   expect(current_path).to eq(login_path)
