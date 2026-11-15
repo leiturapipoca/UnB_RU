@@ -84,7 +84,7 @@ jobs:
           DB_PASSWORD: postgres
         run: |
           bundle exec rails db:create
-          bundle exec rails db:structure:load
+          bundle exec rails db:schema:load
           bundle exec rails db:test:prepare
 
       - name: Rodar Testes Unitários (RSpec)
