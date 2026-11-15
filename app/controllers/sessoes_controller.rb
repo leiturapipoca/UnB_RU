@@ -33,4 +33,21 @@ class SessoesController < ApplicationController
     session[:estudante_id] = params[:id]
     redirect_to extrato_estudante_path(params[:id])
   end
+
+ def test_login_funcionario
+    campus = Campus.find_or_create_by!(nome: "Darcy Ribeiro")
+    restaurante = Restaurante.find_or_create_by!(campus: campus, nome: "RU Central", piso: 1, capacidade_lugares: 500)
+    catraca = Catraca.find_or_create_by!(restaurante: restaurante, numero: 1, modo_operacional: "COMUM", status: "ONLINE")
+
+    sessao = SessaoOperacao.find_or_create_by!(funcionario_id: params[:id], catraca: catraca, encerrada_em: nil) do |s|
+      s.iniciada_em = Time.current
+    end
+
+    session[:funcionario_id] = params[:id]
+    session[:restaurante_id] = restaurante.id
+    session[:catraca_id] = catraca.id
+    session[:sessao_operacao_id] = sessao.id
+
+    redirect_to root_path
+  end
 end

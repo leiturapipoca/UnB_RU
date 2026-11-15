@@ -1,0 +1,21 @@
+<h1>Relatório de Operação</h1>
+
+<% if flash[:alert] %>
+  <div style="color: red; font-weight: bold;"><%= flash[:alert] %></div>
+<% end %>
+
+<%= form_with url: exportar_relatorios_path(format: :pdf), method: :get, local: true do |f| %>
+  <div>
+    <%= f.label :data_inicio, "Data Início" %>
+    <%= f.date_field :data_inicio, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :data_fim, "Data Fim" %>
+    <%= f.date_field :data_fim, required: true %>
+  </div>
+
+  <div style="margin-top: 10px;">
+    <%= f.submit "Exportar PDF" %>
+  </div>
+<% end %>
