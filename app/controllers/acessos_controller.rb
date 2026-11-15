@@ -1,84 +1,50 @@
 # frozen_string_literal: true
+
 class AcessosController < ApplicationController
   def new
-    # Renderiza a tela aguardando a leitura do cartão/matrícula
   end
-
-  def sincronizar
-    acessos_pendentes = params[:acessos] || []
-    
-    sessao = SessaoOperacao.where(encerrada_em: nil).first
-    turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", Time.current.strftime("%H:%M:%S"), Time.current.strftime("%H:%M:%S")).first
-    
-    if sessao.present? && turno.present?
-      acessos_pendentes.each do |matricula|
-        estudante = Estudante.find_by(matricula: matricula)
-        next unless estudante
-        
-        # Registra o acesso atrasado marcando a hora em que foi sincronizado
-        begin
-          Acesso.create(
-            sessao_operacao_id: sessao.id,
-            turno_id: turno.id,
-            estudante_id: estudante.id,
-            identificacao_lida: matricula,
-            data_hora: Time.current, # No mundo real, viria do JS o horário exato do offline
-            modalidade: 'COMUM',
-            resultado: 'LIBERADO',
-            sincronizado_em: Time.current
-          )
-        rescue ActiveRecord::StatementInvalid
-          # Ignora caso a trigger do banco barre (ex: se o cara passou duas vezes offline)
-          next
-        end
-      end
-    end
-
-    render json: { status: 'sucesso', sincronizados: acessos_pendentes.length }
-  end
-
-
 
   def create
-    matricula = params[:identificacao]
-    estudante = Estudante.find_by(matricula: matricula)
+    matricula = params[:identificacao].to_s.strip
 
-    # 1. Se não achar o estudante (identificação inválida)
+    if session[:modo_offline]
+      processar_offline(matricula)
+      return
+    end
+
+    estudante = Estudante.find_by(matricula: matricula)
     if estudante.nil?
       flash.now[:alert] = "Acesso Não Autorizado"
       render :new, status: :unprocessable_entity
       return
     end
 
-    # Para o MVP, vamos pegar um turno e uma sessão ativa fictícios/atuais
-    # Na vida real, a sessão estaria vinculada ao operador logado.
     sessao = SessaoOperacao.where(encerrada_em: nil).first
     horario_atual = Time.current.strftime("%H:%M:%S")
     turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", horario_atual, horario_atual).first
 
     if turno.nil? || sessao.nil?
-      flash.now[:alert] = "Sistema indisponível ou fora do horário"
+      flash.now[:alert] = "Fora do horário de atendimento"
       render :new, status: :unprocessable_entity
       return
     end
 
-    # 2. Tenta registrar o acesso liberado
     acesso = Acesso.new(
       sessao_operacao_id: sessao.id,
       turno_id: turno.id,
       estudante_id: estudante.id,
       identificacao_lida: matricula,
       data_hora: Time.current,
-      modalidade: 'COMUM',
-      resultado: 'LIBERADO'
+      modalidade: "COMUM",
+      resultado: "LIBERADO"
     )
 
     begin
       if acesso.save
         flash.now[:notice] = "Catraca Liberada"
+        render :new, status: :ok
       end
     rescue ActiveRecord::StatementInvalid => e
-      # 3. Captura as exceções geradas pelas triggers do seu structure.sql
       if e.message.include?("Saldo insuficiente")
         flash.now[:alert] = "Acesso Não Autorizado"
       elsif e.message.include?("Entrada já registrada")
@@ -86,12 +52,73 @@ class AcessosController < ApplicationController
       else
         flash.now[:alert] = "Erro ao processar acesso"
       end
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def sincronizar
+    session[:modo_offline] = false
+    pendentes = session[:historico_local] || []
+
+    sessao = SessaoOperacao.where(encerrada_em: nil).first
+    horario_atual = Time.current.strftime("%H:%M:%S")
+    turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", horario_atual, horario_atual).first
+
+    sincronizados = 0
+
+    if sessao.present? && turno.present?
+      pendentes.each do |registro|
+        matricula = registro.is_a?(Hash) ? registro["matricula"] : registro
+        data_registro = registro.is_a?(Hash) && registro["data_hora"] ? Time.zone.parse(registro["data_hora"]) : Time.current
+
+        estudante = Estudante.find_by(matricula: matricula)
+        next unless estudante
+
+        begin
+          Acesso.create!(
+            sessao_operacao_id: sessao.id,
+            turno_id: turno.id,
+            estudante_id: estudante.id,
+            identificacao_lida: matricula,
+            data_hora: data_registro,
+            modalidade: "COMUM",
+            resultado: "LIBERADO",
+            sincronizado_em: Time.current
+          )
+          sincronizados += 1
+        rescue ActiveRecord::StatementInvalid
+          next
+        end
+      end
     end
 
+    session[:historico_local] = []
 
-        
+    respond_to do |format|
+      format.html do
+        flash[:notice] = "Sincronizado com sucesso: #{sincronizados} acessos"
+        redirect_to catraca_validacao_path
+      end
+      format.json { render json: { status: "sucesso", sincronizados: sincronizados } }
+    end
+  end
 
-    # Renderiza a mesma tela mostrando a mensagem (flash)
-    render :new, status: :unprocessable_entity
+  private
+
+  def processar_offline(matricula)
+    if matricula.blank? || session[:falha_validacao_local]
+      flash.now[:alert] = "Validação indisponível offline"
+      render :new, status: :unprocessable_entity
+      return
+    end
+
+    session[:historico_local] ||= []
+    session[:historico_local] << {
+      "matricula" => matricula,
+      "data_hora" => Time.current.iso8601
+    }
+
+    flash.now[:notice] = "Catraca Liberada"
+    render :new, status: :ok
   end
 end
