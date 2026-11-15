@@ -83,9 +83,9 @@ jobs:
           RAILS_ENV: test
           DB_PASSWORD: postgres
         run: |
-          bin/rails db:create
-          bin/rails db:structure:load
-          bin/rails db:test:prepare
+          bundle exec rails db:create
+          bundle exec rails db:structure:load
+          bundle exec rails db:test:prepare
 
       - name: Rodar Testes Unitários (RSpec)
         env:
