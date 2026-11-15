@@ -11,7 +11,7 @@
       <tr id="restaurante_<%= r.id %>">
         <td><%= r.nome %></td>
         <td><%= r.campus.nome %></td>
-        <td><%= r.status.humanize %></td>
+        <td><%= rotulo_status_restaurante(r.status) %></td>
         <td><%= r.catracas.map { |c| "Catraca #{c.numero}" }.join(", ") %></td>
         <td>
           <%= link_to "Editar", edit_restaurante_path(r) %>

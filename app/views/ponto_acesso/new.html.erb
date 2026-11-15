@@ -7,7 +7,7 @@
       <legend>
         <%= restaurante.nome %>
         <% unless restaurante.status_em_operacao? %>
-          (<%= restaurante.status.humanize %>)
+          (<%= rotulo_status_restaurante(restaurante.status) %>)
         <% end %>
       </legend>
       <% restaurante.catracas.sort_by(&:numero).each do |catraca| %>

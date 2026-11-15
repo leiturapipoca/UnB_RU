@@ -19,15 +19,20 @@ grupo = GrupoTarifario.find_or_create_by!(nome: "Grupo I") { |g| g.descricao = "
   Tarifa.find_or_create_by!(grupo_tarifario: grupo, tipo_refeicao: refeicao) { |t| t.valor = valor }
 end
 
-# Funcionários (a senha é guardada com hash pelo método Funcionario#senha=)
-[
-  { siape: "1000001", nome: "Administrador RU", perfil: :administrador },
-  { siape: "1000002", nome: "Operador RU", perfil: :operador }
-].each do |dados|
-  Funcionario.find_or_create_by!(siape: dados[:siape]) do |f|
-    f.nome = dados[:nome]
-    f.perfil = dados[:perfil]
-    f.senha = "senha123"
+# Funcionários (a senha é guardada com hash pelo método Funcionario#senha=).
+# Só fora de produção: em produção NÃO se criam logins com senha conhecida.
+if Rails.env.production?
+  puts "Produção: funcionários de teste não foram criados (cadastre-os manualmente)."
+else
+  [
+    { siape: "1000001", nome: "Administrador RU", perfil: :administrador },
+    { siape: "1000002", nome: "Operador RU", perfil: :operador }
+  ].each do |dados|
+    Funcionario.find_or_create_by!(siape: dados[:siape]) do |f|
+      f.nome = dados[:nome]
+      f.perfil = dados[:perfil]
+      f.senha = "senha123"
+    end
   end
 end
 
@@ -47,9 +52,9 @@ Cardapio.delete_all
 puts "Criando Turnos..."
 # find_or_create_by!: os turnos podem ter sorteios/acessos ligados, então não são apagados
 turnos = {
-  'cafe_da_manha' => ['CAFE_DA_MANHA', '07:00:00', '09:00:00'],
-  'almoco'        => ['ALMOCO',        '11:00:00', '14:30:00'],
-  'jantar'        => ['JANTAR',        '17:00:00', '19:30:00']
+  'cafe_da_manha' => [ 'CAFE_DA_MANHA', '07:00:00', '09:00:00' ],
+  'almoco'        => [ 'ALMOCO',        '11:00:00', '14:30:00' ],
+  'jantar'        => [ 'JANTAR',        '17:00:00', '19:30:00' ]
 }.transform_values do |tipo, inicio, fim|
   Turno.find_or_create_by!(campus: campus, tipo_refeicao: tipo) do |t|
     t.hora_inicio = inicio
@@ -59,26 +64,26 @@ end
 
 
 MAPEAMENTO_ITENS = {
-  "bebidas"                             => [:bebida, :geral],
-  "bebida"                              => [:bebida, :geral],
-  "panificacao"                         => [:panificacao, :geral],
-  "opcao_extra"                         => [:opcao_extra, :geral],
-  "gordura"                             => [:gordura, :geral],
-  "complemento_padrao"                  => [:complemento, :padrao],
-  "complemento_ovolactovegetariano"     => [:complemento, :ovolactovegetariano],
-  "complemento_vegetariano_estrito"     => [:complemento, :vegetariano_estrito],
-  "fruta"                               => [:fruta, :geral],
-  "salada_1"                            => [:salada, :geral],
-  "salada_2"                            => [:salada, :geral],
-  "molho_para_salada"                   => [:molho_salada, :geral],
-  "prato_principal_padrao"              => [:prato_principal, :padrao],
-  "prato_principal_ovolactovegetariano" => [:prato_principal, :ovolactovegetariano],
-  "prato_principal_vegetariano_estrito" => [:prato_principal, :vegetariano_estrito],
-  "guarnicao"                           => [:guarnicao, :geral],
-  "acompanhamentos"                     => [:acompanhamento, :geral],
-  "sobremesa"                           => [:sobremesa, :geral],
-  "sopa"                                => [:sopa, :geral],
-  "torrada"                             => [:torrada, :geral]
+  "bebidas"                             => [ :bebida, :geral ],
+  "bebida"                              => [ :bebida, :geral ],
+  "panificacao"                         => [ :panificacao, :geral ],
+  "opcao_extra"                         => [ :opcao_extra, :geral ],
+  "gordura"                             => [ :gordura, :geral ],
+  "complemento_padrao"                  => [ :complemento, :padrao ],
+  "complemento_ovolactovegetariano"     => [ :complemento, :ovolactovegetariano ],
+  "complemento_vegetariano_estrito"     => [ :complemento, :vegetariano_estrito ],
+  "fruta"                               => [ :fruta, :geral ],
+  "salada_1"                            => [ :salada, :geral ],
+  "salada_2"                            => [ :salada, :geral ],
+  "molho_para_salada"                   => [ :molho_salada, :geral ],
+  "prato_principal_padrao"              => [ :prato_principal, :padrao ],
+  "prato_principal_ovolactovegetariano" => [ :prato_principal, :ovolactovegetariano ],
+  "prato_principal_vegetariano_estrito" => [ :prato_principal, :vegetariano_estrito ],
+  "guarnicao"                           => [ :guarnicao, :geral ],
+  "acompanhamentos"                     => [ :acompanhamento, :geral ],
+  "sobremesa"                           => [ :sobremesa, :geral ],
+  "sopa"                                => [ :sopa, :geral ],
+  "torrada"                             => [ :torrada, :geral ]
 }.freeze
 
 
@@ -121,7 +126,7 @@ dados_cardapio.each do |dia_nome, refeicoes|
       categoria, opcao = mapeamento
 
 
-      valores = valor_json.is_a?(Array) ? valor_json : [valor_json]
+      valores = valor_json.is_a?(Array) ? valor_json : [ valor_json ]
 
       valores.each do |descricao|
         ItemCardapio.create!(

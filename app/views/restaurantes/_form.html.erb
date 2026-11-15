@@ -21,7 +21,7 @@
   </div>
   <div>
     <%= f.label :status, "Status do restaurante" %>
-    <%= f.select :status, Restaurante.statuses.keys %>
+    <%= f.select :status, opcoes_status_restaurante %>
   </div>
 
   <h2>Catracas</h2>
@@ -37,11 +37,11 @@
       </div>
       <div>
         <%= c.label :modo_operacional, "Modo operacional" %>
-        <%= c.select :modo_operacional, Catraca.defined_enums["modo_operacional"].keys %>
+        <%= c.select :modo_operacional, opcoes_modo_catraca %>
       </div>
       <div>
         <%= c.label :status, "Status da catraca" %>
-        <%= c.select :status, Catraca.statuses.keys %>
+        <%= c.select :status, opcoes_status_catraca %>
       </div>
       <% if c.object.persisted? %>
         <div>
