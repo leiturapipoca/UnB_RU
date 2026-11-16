@@ -18,17 +18,24 @@ Se estiver dando problema de utf-8 na hora de rodar o cucumber, rode todos esses
 
 Windows:
 chcp 65001
+
 $env:RUBYOPT="-Eutf-8"
+
 set RUBYOPT=-Eutf-8
+
 $env:CUCUMBER_OUTPUT_ENCODING="utf-8"
 
 Linux:
+
 export LANG=pt_BR.UTF-8
+
 export RUBYOPT="-Eutf-8"
+
 export CUCUMBER_OUTPUT_ENCODING="utf-8"
 
 
 Para rodar os testes cucumber e RSpec:
 
 bundle exec rspec
+
 bundle exec cucumber
