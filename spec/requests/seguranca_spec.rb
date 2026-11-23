@@ -49,6 +49,37 @@ RSpec.describe "Segurança dos dados de estudantes", type: :request do
     end
   end
 
+  describe "menu do funcionário" do
+    it "não mostra o relatório global ao operador" do
+      entrar_como(criar_funcionario(:operador, "1000004"))
+
+      get ponto_acesso_path
+
+      expect(response.body).not_to include("Relatório global")
+    end
+
+    it "mostra o relatório global ao administrador" do
+      entrar_como(criar_funcionario(:administrador, "1000005"))
+
+      get ponto_acesso_path
+
+      expect(response.body).to include("Relatório global")
+    end
+
+    it "mostra Turnos e Relatórios só ao gestor, e Restaurantes só ao administrador" do
+      entrar_como(criar_funcionario(:gestor, "1000006"))
+      get ponto_acesso_path
+      expect(response.body).to include("Turnos")
+      expect(response.body).not_to include("Restaurantes")
+
+      delete logout_path
+      entrar_como(criar_funcionario(:administrador, "1000007"))
+      get ponto_acesso_path
+      expect(response.body).to include("Restaurantes")
+      expect(response.body).not_to include("Turnos")
+    end
+  end
+
   describe "cadastro de estudante" do
     it "guarda só o hash da senha, nunca o texto digitado" do
       post estudantes_path, params: { estudante: { matricula: "221045999", nome: "Ana Beatriz", senha_hash: "minhaSenha1" } }

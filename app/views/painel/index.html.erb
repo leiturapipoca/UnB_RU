@@ -39,9 +39,11 @@
       <span><b>Trocar restaurante/catraca</b><small>Escolha em qual ponto você vai operar.</small></span>
     <% end %>
 
-    <%= link_to relatorio_global_acessos_path, class: "cartao acesso-rapido" do %>
-      <span class="estatistica__icone"><%= icone :arquivo, tamanho: 22 %></span>
-      <span><b>Relatório global de acessos</b><small>Consulte as entradas por restaurante e catraca.</small></span>
+    <% if funcionario_logado.perfil_administrador? || funcionario_logado.perfil_gestor? %>
+      <%= link_to relatorio_global_acessos_path, class: "cartao acesso-rapido" do %>
+        <span class="estatistica__icone"><%= icone :arquivo, tamanho: 22 %></span>
+        <span><b>Relatório global de acessos</b><small>Consulte as entradas por restaurante e catraca.</small></span>
+      <% end %>
     <% end %>
 
     <% if funcionario_logado.perfil_administrador? %>
