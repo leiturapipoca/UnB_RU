@@ -23,12 +23,12 @@
         <p style="font-size:.8rem; font-weight:700; margin-bottom:.4rem">Método de Pagamento:</p>
 
         <div class="opcao">
-          <%= f.radio_button :metodo_pagamento, 'PIX', id: 'PIX' %>
+          <%= f.radio_button :metodo_pagamento, 'PIX', id: 'PIX', required: true %>
           <%= f.label :metodo_pagamento_pix, for: 'PIX', class: 'opcao__corpo' do %><%= icone :raio %> PIX<% end %>
         </div>
 
         <div class="opcao">
-          <%= f.radio_button :metodo_pagamento, 'CARTAO_CREDITO', id: 'CARTAO_CREDITO' %>
+          <%= f.radio_button :metodo_pagamento, 'CARTAO_CREDITO', id: 'CARTAO_CREDITO', required: true %>
           <%= f.label :metodo_pagamento_cartao, for: 'CARTAO_CREDITO', class: 'opcao__corpo' do %><%= icone :carteira %> Cartão de Crédito<% end %>
         </div>
       </div>
