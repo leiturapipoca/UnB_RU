@@ -1,51 +1,82 @@
-<h1>Extrato e Histórico</h1>
-
-<% if flash[:alert] %>
-  <div class="alert"><%= flash[:alert] %></div>
-<% end %>
-
-<div>
-  <%= button_to "Exportar Histórico", historico_refeicoes_path, method: :get, params: { exportar: 1 } %>
-
-  <%= form_with url: exportar_historico_refeicoes_path, method: :post, data: { turbo: false } do |f| %>
-    <div>
-      <%= f.label :formato, "Formato" %>
-      <%= f.select :formato, options_for_select([["PDF", "PDF"]], params[:formato]) %>
+<div class="pagina">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-pagina__texto">
+      <span class="etiqueta"><%= icone :carteira, tamanho: 14 %> Carteira estudantil</span>
+      <h1>Extrato e Histórico</h1>
+      <p>Acompanhe suas recargas e as refeições realizadas no RU.</p>
     </div>
-
-    <%= f.submit "Confirmar Exportação" %>
-  <% end %>
-</div>
-
-<hr>
-
-<% if @movimentacoes.empty? %>
-  <p>Nenhuma movimentação encontrada</p>
-<% else %>
-  <div class="resumo">
-    <p><strong>Total Recarregado:</strong> <%= number_to_currency(@total_recarregado) %></p>
-    <p><strong>Total Gasto:</strong> <%= number_to_currency(@total_gasto) %></p>
-    <p><strong>Quantidade de Refeições:</strong> <%= @quantidade_refeicoes %></p>
+    <div class="cabecalho-pagina__acoes">
+      <%= link_to new_recarga_path, class: "botao" do %><%= icone :mais %> Recarregar saldo<% end %>
+    </div>
   </div>
 
-  <table>
-    <thead>
-    <tr>
-      <th>Data</th>
-      <th>Tipo</th>
-      <th>Descrição</th>
-      <th>Valor</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @movimentacoes.each do |movimentacao| %>
-      <tr>
-        <td><%= movimentacao.data_hora.strftime("%d/%m/%Y %H:%M") %></td>
-        <td><%= movimentacao.tipo %></td>
-        <td><%= movimentacao.descricao %></td>
-        <td><%= number_to_currency(movimentacao.valor) %></td>
-      </tr>
+  <%= render "shared/flash" %>
+
+  <div class="cartao exportar">
+    <%= button_to "Exportar Histórico", historico_refeicoes_path, method: :get, params: { exportar: 1 }, class: "botao botao--secundario" %>
+
+    <%= form_with url: exportar_historico_refeicoes_path, method: :post, data: { turbo: false } do |f| %>
+      <div class="campo">
+        <%= f.label :formato, "Formato" %>
+        <%= f.select :formato, options_for_select([["PDF", "PDF"]], params[:formato]) %>
+      </div>
+
+      <%= f.submit "Confirmar Exportação", class: "botao" %>
     <% end %>
-    </tbody>
-  </table>
-<% end %>
+  </div>
+
+  <% if @movimentacoes.empty? %>
+    <div class="cartao vazio" style="margin-top:1.1rem">
+      <p>Nenhuma movimentação encontrada</p>
+    </div>
+  <% else %>
+    <div class="grade grade--3 resumo" style="margin-top:1.1rem">
+      <div class="cartao estatistica">
+        <div>
+          <div class="estatistica__rotulo">Total Recarregado</div>
+          <div class="estatistica__valor"><%= number_to_currency(@total_recarregado) %></div>
+        </div>
+        <span class="estatistica__icone"><%= icone :carteira, tamanho: 22 %></span>
+      </div>
+      <div class="cartao estatistica">
+        <div>
+          <div class="estatistica__rotulo">Total Gasto</div>
+          <div class="estatistica__valor"><%= number_to_currency(@total_gasto) %></div>
+        </div>
+        <span class="estatistica__icone"><%= icone :talheres, tamanho: 22 %></span>
+      </div>
+      <div class="cartao estatistica">
+        <div>
+          <div class="estatistica__rotulo">Quantidade de Refeições</div>
+          <div class="estatistica__valor"><%= @quantidade_refeicoes %></div>
+        </div>
+        <span class="estatistica__icone"><%= icone :ok, tamanho: 22 %></span>
+      </div>
+    </div>
+
+    <div class="cartao" style="margin-top:1.1rem">
+      <div class="tabela-envoltorio">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @movimentacoes.each do |movimentacao| %>
+              <tr>
+                <td><%= movimentacao.data_hora.strftime("%d/%m/%Y %H:%M") %></td>
+                <td><span class="selo <%= movimentacao.tipo == 'RECARGA' ? 'selo--verde' : 'selo--azul' %>"><%= movimentacao.tipo %></span></td>
+                <td><%= movimentacao.descricao %></td>
+                <td class="<%= movimentacao.tipo == 'RECARGA' ? 'valor-positivo' : 'valor-negativo' %>"><%= number_to_currency(movimentacao.valor) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>
