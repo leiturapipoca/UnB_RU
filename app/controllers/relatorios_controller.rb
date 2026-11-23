@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class RelatoriosController < ApplicationController
+  # O relatório global mostra nomes e horários de entrada dos estudantes: só para quem está
+  # logado e tem perfil de gestor ou administrador.
+  before_action :exigir_login, only: :acessos
+  before_action :exigir_gestor_ou_administrador, only: :acessos
+
   def acessos
     @restaurantes = Restaurante.order(:nome)
     @catracas_opcoes = Catraca.where.not(descricao: [ nil, "" ]).distinct.order(:descricao).pluck(:descricao)
@@ -56,6 +61,12 @@ before_action :require_gestor, only: [ :index, :exportar ]
   end
 
   private
+
+  def exigir_gestor_ou_administrador
+    return if funcionario_logado&.perfil_gestor? || funcionario_logado&.perfil_administrador?
+
+    redirect_to root_path, alert: "Acesso restrito a gestores e administradores"
+  end
 
   def require_gestor
     funcionario = Funcionario.find_by(id: session[:funcionario_id])

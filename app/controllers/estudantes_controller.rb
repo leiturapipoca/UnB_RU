@@ -20,6 +20,9 @@ class EstudantesController < ApplicationController
       return
     end
 
+    # Guarda só o hash da senha (BCrypt), nunca o texto digitado
+    @estudante.senha_hash = BCrypt::Password.create(@estudante.senha_hash) if @estudante.senha_hash.present?
+
     if @estudante.save
       redirect_to new_estudante_path, notice: "Usuário cadastrado com sucesso"
     else
@@ -83,7 +86,13 @@ class EstudantesController < ApplicationController
     end
 
 
-    @estudante = params[:id].present? ? Estudante.find_by(id: params[:id]) : current_estudante
+    # Cada estudante só vê o próprio extrato: um id de outra pessoa na URL é recusado
+    if params[:id].present? && params[:id].to_s != current_estudante.id.to_s
+      redirect_to extrato_estudante_path(current_estudante), alert: "Você só pode ver o seu próprio extrato"
+      return
+    end
+
+    @estudante = current_estudante
   end
 
   def carregar_dados_extrato
