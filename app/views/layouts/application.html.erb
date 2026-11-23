@@ -85,9 +85,14 @@
             <%= link_aba "Ponto de acesso", ponto_acesso_path, :catraca %>
             <%= link_aba "FastPass", fastpass_path, :raio %>
             <%= link_aba "Catraca", catraca_validacao_path, :cracha %>
-            <%= link_aba "Relatório global", relatorio_global_acessos_path, :arquivo %>
+            <%# Cada item só aparece para quem tem permissão de abri-lo (as telas também conferem no servidor) %>
+            <% if funcionario_logado.perfil_administrador? || funcionario_logado.perfil_gestor? %>
+              <%= link_aba "Relatório global", relatorio_global_acessos_path, :arquivo %>
+            <% end %>
             <% if funcionario_logado.perfil_administrador? %>
               <%= link_aba "Restaurantes", restaurantes_path, :predio %>
+            <% end %>
+            <% if funcionario_logado.perfil_gestor? %>
               <%= link_aba "Turnos", new_turno_path, :relogio %>
               <%= link_aba "Relatórios", relatorios_path, :arquivo %>
             <% end %>

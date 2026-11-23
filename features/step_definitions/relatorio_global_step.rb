@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 Dado(/^que o administrador está logado(?: no sistema)?$/) do
+  # O relatório global exige funcionário logado com perfil de administrador
+  administrador = Funcionario.find_or_create_by!(siape: '1000099') do |f|
+    f.nome = 'Administrador Teste'
+    f.senha_hash = 'hash'
+    f.perfil = :administrador
+    f.ativo = true
+  end
+  visit test_login_funcionario_path(administrador.id)
   visit relatorio_global_acessos_path
 end
 

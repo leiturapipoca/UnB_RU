@@ -98,6 +98,12 @@ RSpec.describe RelatoriosController, type: :request do
   end
 
   describe "GET /relatorio_global_acessos" do
+    before do
+      # O relatório global exige funcionário logado com perfil de administrador ou gestor
+      administrador = Funcionario.create!(siape: "1000099", nome: "Administrador Teste", senha: "senha123", perfil: :administrador)
+      post login_path, params: { siape: administrador.siape, senha: "senha123" }
+    end
+
     it "filtra apenas os acessos da catraca e restaurante selecionados" do
       get relatorio_global_acessos_path, params: { restaurante: "Restaurante 1", catraca: "Catraca 1" }
 
