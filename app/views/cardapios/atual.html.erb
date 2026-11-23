@@ -1,18 +1,37 @@
-<% if @cardapio.nil? %>
-  <div class="alert alert-warning">
-    <%= flash[:notice] %>
-  </div>
-<% else %>
-  <h1>Cardápio da Refeição Atual</h1>
-  <div class="menu-items">
-    <ul>
-      <% @itens.each do |item| %>
-        <li>
+<%# Quando não há refeição, a própria tela mostra a mensagem do flash; o layout não repete %>
+<% content_for :flash_renderizado, "sim" %>
+<div class="pagina pagina--estreita">
+  <% if @cardapio.nil? %>
+    <div class="cabecalho-pagina">
+      <div class="cabecalho-pagina__texto">
+        <span class="etiqueta"><%= icone :talheres, tamanho: 14 %> Cardápio</span>
+        <h1>Cardápio do RU</h1>
+      </div>
+    </div>
 
-          <strong><%= item.categoria.titleize %> (<%= item.opcao.titleize %>):</strong>
-          <%= item.descricao %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+    <div class="alert alert-warning">
+      <%= icone :aviso %>
+      <span><%= flash[:notice] %></span>
+    </div>
+  <% else %>
+    <div class="cabecalho-pagina">
+      <div class="cabecalho-pagina__texto">
+        <span class="etiqueta"><%= icone :talheres, tamanho: 14 %> Cardápio oficial</span>
+        <h1>Cardápio da Refeição Atual</h1>
+        <p>Confira o que está sendo servido agora.</p>
+      </div>
+      <span class="selo selo--verde">Refeição em serviço</span>
+    </div>
+
+    <div class="cartao menu-items">
+      <ul class="refeicao">
+        <% @itens.each do |item| %>
+          <li>
+            <strong><%= item.categoria.titleize %> (<%= item.opcao.titleize %>):</strong>
+            <%= item.descricao %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

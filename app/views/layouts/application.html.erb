@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "Un B Ru" %></title>
+    <title><%= content_for(:title) || "UnB RU" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Un B Ru">
+    <meta name="application-name" content="UnB RU">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,23 +18,101 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <%# Fonte das telas do Figma (se estiver sem internet, o navegador usa uma fonte do sistema) %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <% if funcionario_logado %>
-      <header>
-        <strong>Aplicação de Controle</strong> — <%= funcionario_logado.nome %>
-        <%= button_to "Sair", logout_path, method: :delete, form: { style: "display:inline" } %>
-      </header>
-    <% end %>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-    <% if flash[:alert] %>
-      <div style="color: red; font-weight: bold; margin: 10px 0;"><%= flash[:alert] %></div>
-    <% end %>
+    <header class="topo">
+      <div class="topo__faixa">
+        <%# A marca leva cada tipo de usuário para a sua "casa" %>
+        <% casa = funcionario_logado ? root_path : (current_estudante ? extrato_estudante_path(current_estudante) : login_path) %>
+        <%= link_to casa, class: "marca", "aria-label": "UnB RU, início" do %>
+          <span class="marca__nome">RU UnB</span>
+          <span class="marca__sub">Darcy Ribeiro</span>
+        <% end %>
 
-    <%= yield %>
+        <% if funcionario_logado %>
+          <div class="topo__titulo">
+            <strong>Aplicação de Controle</strong>
+            <span>
+              <% if sessao_operacao_atual %>
+                <%= sessao_operacao_atual.catraca.restaurante.nome %> • Catraca <%= sessao_operacao_atual.catraca.numero %>
+              <% else %>
+                Ponto de acesso não selecionado
+              <% end %>
+            </span>
+          </div>
+
+          <div class="topo__usuario">
+            <div>
+              <b><%= funcionario_logado.nome %></b>
+              <small><%= funcionario_logado.perfil.to_s.humanize %> • SIAPE <%= funcionario_logado.siape.to_s.strip %></small>
+            </div>
+            <span class="avatar"><%= icone :usuario %></span>
+            <%= button_to logout_path, method: :delete, class: "botao botao--secundario botao--pequeno" do %>
+              <%= icone :sair, tamanho: 16 %> Sair
+            <% end %>
+          </div>
+        <% elsif current_estudante %>
+          <div class="topo__titulo">
+            <strong>Portal do Estudante</strong>
+            <span>Carteira e acessos ao RU</span>
+          </div>
+
+          <div class="topo__usuario">
+            <div>
+              <b><%= current_estudante.nome %></b>
+              <small>Matrícula <%= current_estudante.matricula.to_s.strip %></small>
+            </div>
+            <span class="avatar"><%= icone :usuario %></span>
+          </div>
+        <% end %>
+      </div>
+
+      <nav class="abas" aria-label="Menu principal">
+        <div class="abas__lista">
+          <% if funcionario_logado %>
+            <%= link_aba "Início", root_path, :prancheta %>
+            <%= link_aba "Ponto de acesso", ponto_acesso_path, :catraca %>
+            <%= link_aba "FastPass", fastpass_path, :raio %>
+            <%= link_aba "Catraca", catraca_validacao_path, :cracha %>
+            <%= link_aba "Relatório global", relatorio_global_acessos_path, :arquivo %>
+            <% if funcionario_logado.perfil_administrador? %>
+              <%= link_aba "Restaurantes", restaurantes_path, :predio %>
+              <%= link_aba "Turnos", new_turno_path, :relogio %>
+              <%= link_aba "Relatórios", relatorios_path, :arquivo %>
+            <% end %>
+          <% elsif current_estudante %>
+            <%= link_aba "Meu extrato", extrato_estudante_path(current_estudante), :carteira %>
+            <%= link_aba "Recarga", new_recarga_path, :mais %>
+            <%= link_aba "FastPass", inscricoes_fastpass_path, :bilhete %>
+            <%= link_aba "Cardápio", cardapio_atual_path, :talheres %>
+          <% else %>
+            <%= link_aba "Cardápio", cardapio_atual_path, :talheres %>
+            <%= link_aba "Cadastro de estudante", new_estudante_path, :usuario %>
+            <%= link_aba "Acesso do funcionário", login_path, :cadeado %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <main id="conteudo">
+      <%# Rede de segurança: se a página não mostrou os avisos (flash), mostramos aqui,
+          para que nenhuma mensagem do sistema se perca. %>
+      <% if !content_for?(:flash_renderizado) && (flash[:notice] || flash[:alert]) %>
+        <div class="pagina pagina--aviso"><%= render "shared/flash" %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
   </body>
 </html>
