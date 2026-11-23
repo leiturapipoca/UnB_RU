@@ -15,7 +15,7 @@
         <%= f.label :valor, "Valor" %>
         <div class="entrada entrada--prefixo">
           <span class="prefixo">R$</span>
-          <%= f.number_field :valor, step: 0.01, required: true, placeholder: "0,00" %>
+          <%= f.number_field :valor, step: 0.01, required: true,min: 0.01, max: 99999999.99, placeholder: "0,00" %>
         </div>
       </div>
 

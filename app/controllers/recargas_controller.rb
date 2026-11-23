@@ -22,9 +22,16 @@ class RecargasController < ApplicationController
     if @recarga.save
       redirect_to @recarga, notice: "Solicitação de recarga criada. Aguardando pagamento."
     else
-      flash.now[:alert] = @recarga.errors.full_messages.to_sentence
+      flash.now[:alert] = if @recarga.errors.of_kind?(:metodo_pagamento, :blank)
+                            "Selecione um método de pagamento."
+      else
+                            @recarga.errors.full_messages.to_sentence
+      end
       render :new, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RangeError
+    flash.now[:alert] = "Valor inválido: o limite máximo permitido é R$ 99.999.999,99."
+    render :new, status: :unprocessable_entity
   end
 
   def show
@@ -34,6 +41,12 @@ class RecargasController < ApplicationController
   def confirmar
     unless @recarga.status_pendente?
       redirect_to @recarga, alert: "Esta recarga já foi processada."
+      return
+    end
+
+    saldo_resultante = (@recarga.estudante.saldo.to_d + @recarga.valor.to_d).round(2)
+    if saldo_resultante > Recarga::MAX_VALOR
+      redirect_to @recarga, alert: "Não foi possível confirmar: o saldo resultante ultrapassa o limite máximo de R$ 99.999.999,99."
       return
     end
 
@@ -51,6 +64,8 @@ class RecargasController < ApplicationController
     redirect_to @recarga, notice: "Recarga confirmada com sucesso!"
   rescue ActiveRecord::RecordInvalid => e
     redirect_to @recarga, alert: "Erro ao efetivar pagamento: #{e.message}"
+  rescue ActiveRecord::RangeError
+    redirect_to @recarga, alert: "Erro ao efetivar pagamento: o saldo resultante ultrapassa o limite máximo de R$ 99.999.999,99."
   end
 
   def expirar

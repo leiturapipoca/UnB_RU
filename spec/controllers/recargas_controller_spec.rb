@@ -35,6 +35,24 @@ RSpec.describe RecargasController, type: :request do
       expect(recarga.status).to eq("pendente")
       expect(response).to redirect_to(recarga_path(recarga))
     end
+
+    it "exibe alerta quando nenhum método de pagamento é selecionado" do
+      expect do
+        post recargas_path, params: { recarga: { valor: 50.0 } }
+      end.not_to change(Recarga, :count)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Selecione um método de pagamento.")
+    end
+
+    it "bloqueia valores que arredondam para >= 10^8 sem estourar exceção de banco" do
+      expect do
+        post recargas_path, params: { recarga: { valor: "9999999999999999999999", metodo_pagamento: "PIX" } }
+      end.not_to change(Recarga, :count)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("menor que R$ 100.000.000,00")
+    end
   end
 
   describe "PATCH /recargas/:id/confirmar" do
@@ -52,6 +70,25 @@ RSpec.describe RecargasController, type: :request do
 
       expect(recarga.reload.status).to eq("confirmada")
       expect(estudante.reload.saldo).to eq(77.0)
+    end
+
+    it "bloqueia a confirmação com alerta quando saldo + valor arredonda para >= 10^8" do
+      estudante.update!(saldo: 50_000_000.00)
+      recarga = Recarga.create!(
+        estudante: estudante,
+        valor: 49_999_999.99,
+        metodo_pagamento: :pix,
+        status: :pendente,
+        solicitada_em: Time.current,
+        codigo_transacao: "TRX-#{SecureRandom.hex(4)}"
+      )
+      estudante.update!(saldo: 60_000_000.00)
+
+      patch confirmar_recarga_path(recarga)
+
+      expect(recarga.reload.status).to eq("pendente")
+      expect(response).to redirect_to(recarga_path(recarga))
+      expect(flash[:alert]).to include("limite máximo de R$ 99.999.999,99")
     end
   end
 
