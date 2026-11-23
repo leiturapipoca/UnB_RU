@@ -1,42 +1,56 @@
-<h1>Relatório Global de Acessos</h1>
-
-<%= form_with url: relatorio_global_acessos_path, method: :get, local: true do |f| %>
-  <div>
-    <%= f.label :restaurante, "Restaurante" %>
-    <%= f.select :restaurante, options_from_collection_for_select(@restaurantes, :nome, :nome, params[:restaurante]), include_blank: "Selecione..." %>
+<div class="pagina">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-pagina__texto">
+      <span class="etiqueta"><%= icone :arquivo, tamanho: 14 %> Operação</span>
+      <h1>Relatório Global de Acessos</h1>
+      <p>Consulte as entradas registradas, filtrando por restaurante e catraca.</p>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :catraca, "Catraca" %>
-    <%= f.select :catraca, options_for_select(@catracas_opcoes, params[:catraca]), include_blank: "Selecione..." %>
-  </div>
+  <div class="cartao">
+    <%= form_with url: relatorio_global_acessos_path, method: :get, local: true, class: "formulario" do |f| %>
+      <div class="grade grade--3" style="align-items:end">
+        <div class="campo" style="margin:0">
+          <%= f.label :restaurante, "Restaurante" %>
+          <%= f.select :restaurante, options_from_collection_for_select(@restaurantes, :nome, :nome, params[:restaurante]), include_blank: "Selecione..." %>
+        </div>
 
-  <%= f.submit "Filtrar" %>
-<% end %>
+        <div class="campo" style="margin:0">
+          <%= f.label :catraca, "Catraca" %>
+          <%= f.select :catraca, options_for_select(@catracas_opcoes, params[:catraca]), include_blank: "Selecione..." %>
+        </div>
 
-<hr>
-
-<table>
-  <thead>
-    <tr>
-      <th>Estudante</th>
-      <th>Catraca</th>
-      <th>Restaurante</th>
-      <th>Data/Hora</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @acessos.each do |acesso| %>
-      <tr>
-        <td><%= acesso.estudante&.nome %></td>
-        <td><%= acesso.sessao_operacao&.catraca&.descricao %></td>
-        <td><%= acesso.sessao_operacao&.catraca&.restaurante&.nome %></td>
-        <td><%= acesso.data_hora %></td>
-      </tr>
+        <%= f.submit "Filtrar", class: "botao" %>
+      </div>
     <% end %>
-  </tbody>
-</table>
+  </div>
 
-<% if @acessos.empty? %>
-  <p>Nenhum acesso corresponde à busca</p>
-<% end %>
+  <div class="cartao" style="margin-top:1.1rem">
+    <div class="tabela-envoltorio">
+      <table>
+        <thead>
+          <tr>
+            <th>Estudante</th>
+            <th>Catraca</th>
+            <th>Restaurante</th>
+            <th>Data/Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @acessos.each do |acesso| %>
+            <tr>
+              <td><%= acesso.estudante&.nome %></td>
+              <td><%= acesso.sessao_operacao&.catraca&.descricao %></td>
+              <td><%= acesso.sessao_operacao&.catraca&.restaurante&.nome %></td>
+              <td><%= acesso.data_hora %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @acessos.empty? %>
+      <p class="vazio">Nenhum acesso corresponde à busca</p>
+    <% end %>
+  </div>
+</div>

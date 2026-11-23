@@ -1,26 +1,32 @@
-<h1>Detalhes da Recarga</h1>
-
-<% if flash[:notice] %>
-  <div class="notice"><%= flash[:notice] %></div>
-<% end %>
-<% if flash[:alert] %>
-  <div class="alert"><%= flash[:alert] %></div>
-<% end %>
-
-<p><strong>Status:</strong> <%= @recarga.status %></p>
-<p><strong>Valor Solicitado:</strong> R$ <%= @recarga.valor %></p>
-<p><strong>Método:</strong> <%= @recarga.metodo_pagamento %></p>
-<p><strong>Código da Transação:</strong> <%= @recarga.codigo_transacao %></p>
-
-<p><strong>Saldo na conta:</strong> <%= current_estudante.saldo %> reais</p>
-
-<% if @recarga.status_pendente? %>
-  <hr>
-  <h3>Simulação de Pagamento (MVP)</h3>
-  
-  <div style="display: flex; gap: 10px;">
-    <%= button_to 'Confirmar Pagamento', confirmar_recarga_path(@recarga), method: :patch %>
-    
-    <%= button_to 'Simular Expiração', expirar_recarga_path(@recarga), method: :patch %>
+<div class="pagina pagina--estreita">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-pagina__texto">
+      <span class="etiqueta"><%= icone :carteira, tamanho: 14 %> Carteira estudantil</span>
+      <h1>Detalhes da Recarga</h1>
+    </div>
   </div>
-<% end %>
+
+  <%= render "shared/flash" %>
+
+  <% cor_status = { "pendente" => "ambar", "confirmada" => "verde", "expirada" => "vermelho" }[@recarga.status.to_s] %>
+
+  <div class="cartao detalhes">
+    <p><strong>Status:</strong> <span class="selo selo--<%= cor_status %>"><%= @recarga.status %></span></p>
+    <p><strong>Valor Solicitado:</strong> R$ <%= @recarga.valor %></p>
+    <p><strong>Método:</strong> <%= @recarga.metodo_pagamento %></p>
+    <p><strong>Código da Transação:</strong> <%= @recarga.codigo_transacao %></p>
+    <p><strong>Saldo na conta:</strong> <%= current_estudante.saldo %> reais</p>
+  </div>
+
+  <% if @recarga.status_pendente? %>
+    <div class="cartao cartao--cinza" style="margin-top:1.1rem">
+      <h3>Simulação de Pagamento (MVP)</h3>
+      <p style="color:var(--mudo); font-size:.88rem">Use os botões abaixo para simular o retorno do pagamento.</p>
+
+      <div class="botoes" style="display:flex; gap:.6rem; flex-wrap:wrap">
+        <%= button_to 'Confirmar Pagamento', confirmar_recarga_path(@recarga), method: :patch, class: "botao" %>
+        <%= button_to 'Simular Expiração', expirar_recarga_path(@recarga), method: :patch, class: "botao botao--secundario" %>
+      </div>
+    </div>
+  <% end %>
+</div>

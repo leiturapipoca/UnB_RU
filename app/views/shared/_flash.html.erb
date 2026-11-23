@@ -1,6 +1,9 @@
+<%# Avisos (notice/alert). Ao renderizar, marca que a página já mostrou os avisos;
+    assim o layout não repete (veja layouts/application.html.erb). %>
+<% content_for :flash_renderizado, "sim" %>
 <% if flash[:notice] %>
-  <div id="notice"><%= flash[:notice] %></div>
+  <div id="notice" role="status"><%= icone :ok %><span><%= flash[:notice] %></span></div>
 <% end %>
 <% if flash[:alert] %>
-  <div id="alert"><%= flash[:alert] %></div>
+  <div id="alert" role="alert"><%= icone :aviso %><span><%= flash[:alert] %></span></div>
 <% end %>

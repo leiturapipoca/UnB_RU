@@ -1,29 +1,37 @@
-<h1>Cadastro de Estudante</h1>
+<div class="centro">
+  <div class="cartao cartao--login">
+    <span class="icone-quadro"><%= icone :usuario, tamanho: 22 %></span>
+    <h1>Cadastro de Estudante</h1>
+    <p class="subtitulo">Crie sua conta do RU com a matrícula da UnB para consultar o extrato, recarregar saldo e participar do FastPass.</p>
 
-<% if flash[:notice] %>
-  <div id="notice"><%= flash[:notice] %></div>
-<% end %>
+    <%= render "shared/flash" %>
 
-<% if flash[:alert] %>
-  <div id="alert"><%= flash[:alert] %></div>
-<% end %>
+    <%= form_with model: @estudante, local: true, class: "formulario" do |f| %>
+      <div class="campo">
+        <%= f.label :matricula, "Matrícula" %>
+        <div class="entrada">
+          <%= icone :cracha %>
+          <%= f.text_field :matricula, placeholder: "9 dígitos, ex: 221045999", inputmode: "numeric", autocomplete: "username" %>
+        </div>
+      </div>
 
-<!-- Gera a tag <form> apontando para a ação CREATE do controller[cite: 601] -->
-<%= form_with model: @estudante, local: true do |f| %>
-  <div>
-    <%= f.label :matricula, "Matrícula" %>
-    <%= f.text_field :matricula %>
+      <div class="campo">
+        <%= f.label :nome, "Nome" %>
+        <div class="entrada">
+          <%= icone :usuario %>
+          <%= f.text_field :nome, placeholder: "Seu nome completo", autocomplete: "name" %>
+        </div>
+      </div>
+
+      <div class="campo">
+        <%= f.label :senha_hash, "Senha" %>
+        <div class="entrada">
+          <%= icone :cadeado %>
+          <%= f.password_field :senha_hash, placeholder: "Escolha uma senha", autocomplete: "new-password" %>
+        </div>
+      </div>
+
+      <%= f.submit "Cadastrar", class: "botao botao--cheio" %>
+    <% end %>
   </div>
-
-  <div>
-    <%= f.label :nome, "Nome" %>
-    <%= f.text_field :nome %>
-  </div>
-
-  <div>
-    <%= f.label :senha_hash, "Senha" %>
-    <%= f.password_field :senha_hash %>
-  </div>
-
-  <%= f.submit "Cadastrar" %>
-<% end %>
+</div>
