@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get "relatorio_global_acessos", to: "relatorios#acessos", as: :relatorio_global_acessos
+  get "relatorios/acessos", to: "relatorios#acessos", as: :relatorio_global_acessos
 
   # Relatórios de Operação em PDF (Gestor)
   resources :relatorios, only: [ :index ] do
