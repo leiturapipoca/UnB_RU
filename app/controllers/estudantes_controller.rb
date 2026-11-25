@@ -81,7 +81,7 @@ class EstudantesController < ApplicationController
 
   def definir_estudante_extrato
     unless current_estudante
-      redirect_to login_path, alert: "Faça login para visualizar seu extrato"
+      redirect_to login_estudante_path, alert: "Faça login para visualizar seu extrato"
       return
     end
 

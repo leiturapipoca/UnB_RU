@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   post   "login",  to: "sessoes#create"
   delete "logout", to: "sessoes#destroy", as: :logout
 
+  get    "login_estudante",  to: "sessoes_estudante#new",     as: :login_estudante
+  post   "login_estudante",  to: "sessoes_estudante#create"
+  delete "logout_estudante", to: "sessoes_estudante#destroy", as: :logout_estudante
+
  if Rails.env.test? || Rails.env.development?
     get "test_login/:id", to: "sessoes#test_login", as: :test_login
     get "test_login_funcionario/:id", to: "sessoes#test_login_funcionario", as: :test_login_funcionario

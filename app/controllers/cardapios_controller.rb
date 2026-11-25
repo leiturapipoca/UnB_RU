@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 
 class CardapiosController < ApplicationController
-  # action
   def atual
-    # chama o metodo refeicao_atual da model e fornece como variavel de instancia
-    # pra view com o @
-    @cardapio = Cardapio.refeicao_atual
+    @cardapio = Cardapio.refeicao_atual(hora_referencia_cardapio)
 
     if @cardapio.nil?
-      # flash solta uma mensagem de aviso pro usuario
       flash.now[:notice] = "Nenhuma refeição está sendo servida no momento"
     else
-      # includes para evitar queries N+1 ao renderizar os itens, possivelmente
-      # removivel
       @itens = @cardapio.itens_cardapio.order(:ordem)
     end
+  end
+
+  private
+
+  def hora_referencia_cardapio
+    return Time.current unless Rails.env.development? && params[:hora].present?
+
+    hora, minuto = params[:hora].split(":").map(&:to_i)
+    Time.current.change(hour: hora, min: minuto, sec: 0)
+  rescue ArgumentError
+    Time.current
   end
 end

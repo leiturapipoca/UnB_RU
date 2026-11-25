@@ -69,5 +69,5 @@ end
 
 
 Então('ele deve ser redirecionado para a página de login') do
-  expect(current_path).to eq(login_path)
+  expect(current_path).to eq(login_estudante_path)
 end

@@ -74,6 +74,9 @@
               <small>Matrícula <%= current_estudante.matricula.to_s.strip %></small>
             </div>
             <span class="avatar"><%= icone :usuario %></span>
+            <%= button_to logout_estudante_path, method: :delete, class: "botao botao--secundario botao--pequeno" do %>
+              <%= icone :sair, tamanho: 16 %> Sair
+            <% end %>
           </div>
         <% end %>
       </div>
@@ -103,6 +106,7 @@
             <%= link_aba "Cardápio", cardapio_atual_path, :talheres %>
           <% else %>
             <%= link_aba "Cardápio", cardapio_atual_path, :talheres %>
+            <%= link_aba "Login do estudante", login_estudante_path, :entrar %>
             <%= link_aba "Cadastro de estudante", new_estudante_path, :usuario %>
             <%= link_aba "Acesso do funcionário", login_path, :cadeado %>
           <% end %>
