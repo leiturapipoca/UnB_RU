@@ -1,0 +1,42 @@
+<div class="centro">
+  <div class="cartao cartao--login">
+    <span class="icone-quadro"><%= icone :usuario, tamanho: 22 %></span>
+    <h1>Login do Estudante</h1>
+    <p class="subtitulo">Informe sua matrícula e senha para acessar seu extrato, recargas e FastPass.</p>
+
+    <%= render "shared/flash" %>
+
+    <%= form_with url: login_estudante_path, class: "formulario" do |f| %>
+      <div class="campo">
+        <div class="campo__linha">
+          <%= f.label :matricula, "Matrícula" %>
+          <span class="campo__dica">9 dígitos</span>
+        </div>
+        <div class="entrada">
+          <%= icone :usuario %>
+          <%= f.text_field :matricula, placeholder: "Ex: 231012345", autocomplete: "username", inputmode: "numeric", maxlength: 9, autofocus: true %>
+        </div>
+      </div>
+
+      <div class="campo">
+        <div class="campo__linha">
+          <%= f.label :senha, "Senha" %>
+          <span class="campo__dica">Obrigatório</span>
+        </div>
+        <div class="entrada">
+          <%= icone :cadeado %>
+          <%= f.password_field :senha, placeholder: "Digite sua senha", autocomplete: "current-password" %>
+        </div>
+      </div>
+
+      <%= f.button type: "submit", class: "botao botao--cheio" do %>
+        <%= icone :entrar %> Entrar
+      <% end %>
+    <% end %>
+
+    <p class="subtitulo" style="margin-top: 1rem; text-align: center;">
+      Não tem conta? <%= link_to "Cadastre-se", new_estudante_path %> ·
+      <%= link_to "Sou funcionário", login_path %>
+    </p>
+  </div>
+</div>
