@@ -118,10 +118,10 @@ RSpec.describe "Segurança dos dados de estudantes", type: :request do
       expect(response.body).to include("Você só pode ver o seu próprio extrato")
     end
 
-    it "manda para o login quem não está logado" do
+    it "manda para o login do estudante quem não está logado" do
       get extrato_estudante_path(ana)
 
-      expect(response).to redirect_to(login_path)
+      expect(response).to redirect_to(login_estudante_path)
     end
   end
 end
