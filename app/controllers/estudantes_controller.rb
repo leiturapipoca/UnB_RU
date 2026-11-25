@@ -39,7 +39,7 @@ class EstudantesController < ApplicationController
   def historico
     carregar_dados_extrato
 
-    if params[:exportar].present? && @quantidade_refeicoes.zero?
+    if params[:exportar].present? && @movimentacoes.empty?
       flash.now[:alert] = "Nenhum registro no histórico"
     end
 
@@ -49,7 +49,7 @@ class EstudantesController < ApplicationController
   def extrato
     carregar_dados_extrato
 
-    if params[:exportar].present? && @quantidade_refeicoes.zero?
+    if params[:exportar].present? && @movimentacoes.empty?
       flash.now[:alert] = "Nenhum registro no histórico"
     end
   end
@@ -57,7 +57,7 @@ class EstudantesController < ApplicationController
   def exportar_historico
     carregar_dados_extrato
 
-    if @quantidade_refeicoes.zero?
+    if @movimentacoes.empty?
       redirect_to historico_refeicoes_path, alert: "Nenhum registro no histórico"
       return
     end
