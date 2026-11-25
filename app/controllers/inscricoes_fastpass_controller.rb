@@ -102,4 +102,11 @@ class InscricoesFastpassController < ApplicationController
       inscricao.errors.full_messages.to_sentence
     end
   end
+
+  def alternar_notificacoes
+    novo_estado = !current_estudante.notificacoes_ativas?
+    current_estudante.update!(notificacoes_ativas: novo_estado)
+    mensagem = novo_estado ? "Notificações do FastPass ativadas." : "Notificações do FastPass bloqueadas."
+    redirect_to inscricoes_fastpass_path, notice: mensagem
+  end
 end

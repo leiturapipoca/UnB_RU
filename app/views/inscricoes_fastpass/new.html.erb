@@ -21,7 +21,7 @@
       <%= form_with model: @inscricao, url: inscricoes_fastpass_path, data: { turbo: false }, class: "formulario" do |f| %>
         <div class="campo">
           <%= f.label :sorteio_id, "Turno" %>
-          <%= f.select :sorteio_id, options_for_select(opcoes_turnos, @sorteio_selecionado&.id) %>
+          <%= f.select :sorteio_id, options_for_select(opcoes_turnos, @sorteio_selecionado&.id), {}, onchange: "window.location.href='#{nova_inscricao_fastpass_path}?sorteio_id=' + this.value" %>
         </div>
 
         <% if opcoes_janelas.any? %>

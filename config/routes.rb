@@ -47,8 +47,18 @@ Rails.application.routes.draw do
 
   resources :restaurantes, except: :show
 
-  # Gestão de Turnos
-  resources :turnos, only: [ :new, :create ]
+  # Gestão de Turnos e Time-frames (FastPass)
+  resources :turnos, only: [ :index, :show, :new, :create, :edit, :update ] do
+    resources :janelas_fastpass, only: [ :create, :edit, :update, :destroy ]
+  end
+
+  # Botão único: Simular sorteio e notificações FastPass (Gestor)
+  post "fastpass/simular", to: "fastpass_simulacao#create", as: :simular_fastpass
+
+  get   "inscricoes_fastpass",                       to: "inscricoes_fastpass#index",                 as: :inscricoes_fastpass
+  get   "inscricoes_fastpass/nova",                  to: "inscricoes_fastpass#new",                   as: :nova_inscricao_fastpass
+  post  "inscricoes_fastpass",                       to: "inscricoes_fastpass#create"
+  patch "inscricoes_fastpass/alternar_notificacoes", to: "inscricoes_fastpass#alternar_notificacoes", as: :alternar_notificacoes_fastpass
 
   # Issue 5: escolha do restaurante/catraca depois do login
   get  "ponto-de-acesso", to: "ponto_acesso#new",    as: :ponto_acesso
@@ -63,8 +73,4 @@ Rails.application.routes.draw do
   # Issue 16: leitura do passe do FastPass na catraca
   get  "/catraca/fastpass", to: "fastpass#new", as: :fastpass
   post "/catraca/fastpass", to: "fastpass#create"
-
-  get  "inscricoes_fastpass",      to: "inscricoes_fastpass#index",  as: :inscricoes_fastpass
-  get  "inscricoes_fastpass/nova", to: "inscricoes_fastpass#new",    as: :nova_inscricao_fastpass
-  post "inscricoes_fastpass",      to: "inscricoes_fastpass#create"
 end

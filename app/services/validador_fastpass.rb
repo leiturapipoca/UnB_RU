@@ -83,6 +83,8 @@ class ValidadorFastpass
       :saldo_insuficiente
     elsif mensagem.include?("Entrada")
       :entrada_ja_registrada
+    elsif mensagem.include?("não é do campus")
+      :fora_do_turno
     end
   end
 end

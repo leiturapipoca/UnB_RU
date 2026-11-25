@@ -1,0 +1,102 @@
+<div class="pagina">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-pagina__texto">
+      <span class="etiqueta"><%= icone :bilhete, tamanho: 14 %> Gestão FastPass</span>
+      <h1>Turnos e Time-frames</h1>
+      <p>Gerencie os turnos, configure os time-frames e simule o sorteio automático do FastPass.</p>
+    </div>
+    <div class="cabecalho-pagina__acoes">
+      <%= button_to "Simular FastPass",
+                    simular_fastpass_path,
+                    method: :post,
+                    form: { data: { turbo: false } },
+                    class: "botao" %>
+      <%= link_to new_turno_path, class: "botao" do %><%= icone :mais %> Novo Turno<% end %>
+    </div>
+  </div>
+
+  <%= render "shared/flash" %>
+
+  <% if @turnos.empty? %>
+    <div class="cartao vazio">
+      <p>Nenhum turno cadastrado ainda.</p>
+    </div>
+  <% else %>
+    <div class="cartao">
+      <h2>Turnos cadastrados</h2>
+      <div class="tabela-envoltorio">
+        <table>
+          <thead>
+            <tr>
+              <th>Campus</th>
+              <th>Refeição</th>
+              <th>Horário</th>
+              <th>FastPass</th>
+              <th>Trava de Pontualidade</th>
+              <th>Time-frames</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @turnos.each do |turno| %>
+              <tr>
+                <td><%= turno.campus.nome %></td>
+                <td><strong><%= turno.tipo_refeicao_label %></strong></td>
+                <td><%= "#{turno.hora_inicio.strftime('%H:%M')} - #{turno.hora_fim.strftime('%H:%M')}" %></td>
+                <td><span class="selo selo--azul"><%= turno.fastpass_habilitado? ? "Habilitado" : "Desabilitado" %></span></td>
+                <td><%= turno.trava_pontualidade? ? "Ativa (-#{turno.antecedencia_min}m / +#{turno.tolerancia_atraso_min}m)" : "Desligada" %></td>
+                <td><%= turno.janelas_fastpass.size %></td>
+                <td>
+                  <%= link_to "Time-frames", turno_path(turno) %> ·
+                  <%= link_to "Editar", edit_turno_path(turno) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="cartao" style="margin-top:1.5rem">
+    <h2>Inscrições e Resultados de Hoje (<%= Date.current.strftime("%d/%m/%Y") %>)</h2>
+    <% if @inscricoes_hoje.empty? %>
+      <p>Nenhuma inscrição registrada hoje ainda.</p>
+    <% else %>
+      <div class="tabela-envoltorio">
+        <table>
+          <thead>
+            <tr>
+              <th>Estudante</th>
+              <th>Turno</th>
+              <th>Time-frame</th>
+              <th>Status</th>
+              <th>Código do Passe</th>
+              <th>Notificação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @inscricoes_hoje.each do |inscricao| %>
+              <tr>
+                <td><%= inscricao.estudante.nome %> (<%= inscricao.estudante.matricula.strip %>)</td>
+                <td><%= inscricao.sorteio.turno.tipo_refeicao_label %></td>
+                <td><%= inscricao.janela_fastpass.horario_formatado %></td>
+                <td><span class="selo selo--azul"><%= InscricoesFastpassController::STATUS_LABELS[inscricao.status] || inscricao.status %></span></td>
+                <td><strong><%= inscricao.codigo_passe || "-" %></strong></td>
+                <td>
+                  <% if inscricao.notificado_em.present? %>
+                    <%= inscricao.estudante.notificacoes_ativas? ? "Enviada (#{inscricao.notificado_em.strftime('%H:%M')})" : "Bloqueada pelo aluno" %>
+                  <% else %>
+                    Aguardando sorteio
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+
+  <p style="margin-top:1rem"><%= link_to "Voltar ao painel", root_path %></p>
+</div>

@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
 class Turno < ApplicationRecord
+  TIPO_LABELS = {
+    "cafe_da_manha" => "Café da Manhã",
+    "almoco" => "Almoço",
+    "jantar" => "Jantar"
+  }.freeze
+
   belongs_to :campus
   has_many :acessos
   has_many :janelas_fastpass, class_name: "JanelaFastpass", dependent: :destroy
+  has_many :sorteios, dependent: :restrict_with_error
 
   enum :tipo_refeicao, {
     cafe_da_manha: "CAFE_DA_MANHA",
@@ -12,8 +19,14 @@ class Turno < ApplicationRecord
   }
 
   validates :tipo_refeicao, :hora_inicio, :hora_fim, presence: true
+  validates :tolerancia_atraso_min, :antecedencia_min,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :hora_inicio_menor_que_hora_fim
   validate :sem_conflito_de_horario
+
+  def tipo_refeicao_label
+    TIPO_LABELS[tipo_refeicao] || tipo_refeicao
+  end
 
   private
 

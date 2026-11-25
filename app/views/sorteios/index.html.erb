@@ -1,0 +1,56 @@
+<div class="pagina">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-paginatexto">
+      <span class="etiqueta"><%= icone :bilhete, tamanho: 14 %> Gestão FastPass</span>
+      <h1>Sorteios FastPass</h1>
+      <p>Abra novos sorteios, acompanhe os inscritos e dispare o sorteio com notificação aos estudantes.</p>
+    </div>
+    <div class="cabecalho-paginaacoes">
+      <%= link_to new_sorteio_path, class: "botao" do %><%= icone :mais %> Abrir Sorteio<% end %>
+    </div>
+  </div>
+
+  <%= render "shared/flash" %>
+
+  <% if @sorteios.empty? %>
+    <div class="cartao vazio">
+      <p>Nenhum sorteio cadastrado ainda.</p>
+    </div>
+  <% else %>
+    <div class="cartao">
+      <div class="tabela-envoltorio">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Turno</th>
+              <th>Campus</th>
+              <th>Resultado previsto</th>
+              <th>Status</th>
+              <th>Inscritos</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @sorteios.each do |sorteio| %>
+              <tr>
+                <td><strong><%= sorteio.data.strftime("%d/%m/%Y") %></strong></td>
+                <td><%= sorteio.turno.tipo_refeicao_label %></td>
+                <td><%= sorteio.turno.campus.nome %></td>
+                <td><%= sorteio.data_hora_resultado.strftime("%d/%m/%Y %H:%M") %></td>
+                <td><span class="selo selo--azul"><%= sorteio.status_label %></span></td>
+                <td><%= sorteio.inscricoes_fastpass.count %></td>
+                <td><%= link_to "Gerenciar", sorteio_path(sorteio) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <p style="margin-top:1rem">
+    <%= link_to "Gerenciar Turnos e Time-frames", turnos_path %> ·
+    <%= link_to "Voltar ao painel", root_path %>
+  </p>
+</div>

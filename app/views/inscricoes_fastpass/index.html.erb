@@ -6,6 +6,10 @@
       <p>Acompanhe os sorteios em que você se inscreveu e o código do seu passe.</p>
     </div>
     <div class="cabecalho-pagina__acoes">
+      <%= button_to (current_estudante.notificacoes_ativas? ? "Bloquear notificações" : "Ativar notificações"),
+                    alternar_notificacoes_fastpass_path,
+                    method: :patch,
+                    form: { data: { turbo: false } } %>
       <%= link_to nova_inscricao_fastpass_path, class: "botao" do %><%= icone :mais %> Nova Inscrição FastPass<% end %>
     </div>
   </div>
@@ -27,6 +31,7 @@
               <th>Time-frame</th>
               <th>Status</th>
               <th>Código do Passe</th>
+              <th>Notificação</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +42,21 @@
                 <td><%= "#{inscricao.janela_fastpass.hora_inicio.strftime('%H:%M')} - #{inscricao.janela_fastpass.hora_fim.strftime('%H:%M')}" %></td>
                 <td><span class="selo selo--azul"><%= InscricoesFastpassController::STATUS_LABELS[inscricao.status] || inscricao.status %></span></td>
                 <td><strong><%= inscricao.codigo_passe || "-" %></strong></td>
+                <td>
+                  <% if inscricao.notificado_em.present? %>
+                    <% if !current_estudante.notificacoes_ativas? %>
+                      Notificações bloqueadas
+                    <% elsif inscricao.status_contemplado? || inscricao.status_utilizada? %>
+                      Você ganhou o sorteio
+                    <% elsif inscricao.status_nao_contemplado? %>
+                      Você não ganhou o sorteio
+                    <% else %>
+                      -
+                    <% end %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>

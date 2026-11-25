@@ -1,0 +1,49 @@
+<div class="pagina pagina--estreita">
+  <div class="cabecalho-pagina">
+    <div class="cabecalho-pagina__texto">
+      <span class="etiqueta"><%= icone :bilhete, tamanho: 14 %> Gestão FastPass</span>
+      <h1>Abrir Novo Sorteio</h1>
+      <p>Escolha o turno e a data para liberar as inscrições do FastPass aos estudantes.</p>
+    </div>
+  </div>
+
+  <%= render "shared/flash" %>
+
+  <% if @turnos.empty? %>
+    <div class="cartao vazio">
+      <p>Cadastre ao menos um turno antes de abrir um sorteio.</p>
+      <p style="margin-top:1rem"><%= link_to "Ir para Turnos", turnos_path, class: "botao" %></p>
+    </div>
+  <% else %>
+    <% opcoes_turnos = @turnos.map do |t|
+         janelas_ativas = t.janelas_fastpass.count(&:ativa?)
+         etiqueta = "#{t.tipo_refeicao_label} — #{t.campus.nome} (#{t.hora_inicio.strftime('%H:%M')} - #{t.hora_fim.strftime('%H:%M')} · #{janelas_ativas} time-frames ativos)"
+         [ etiqueta, t.id ]
+       end %>
+
+    <div class="cartao">
+      <%= form_with model: @sorteio, data: { turbo: false }, class: "formulario" do |f| %>
+        <div class="campo">
+          <%= f.label :turno_id, "Turno" %>
+          <%= f.select :turno_id, options_for_select(opcoes_turnos, @sorteio.turno_id), {}, required: true %>
+        </div>
+
+        <div class="campo">
+          <%= f.label :data, "Data da refeição" %>
+          <%= f.date_field :data, required: true %>
+        </div>
+
+        <div class="campo">
+          <%= f.label :data_hora_resultado, "Data e hora prevista do resultado" %>
+          <%= f.datetime_local_field :data_hora_resultado,
+                                     value: @sorteio.data_hora_resultado&.strftime("%Y-%m-%dT%H:%M"),
+                                     required: true %>
+        </div>
+
+        <%= f.submit "Abrir Sorteio", class: "botao" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <p style="margin-top:1rem"><%= link_to "Voltar para Sorteios", sorteios_path %></p>
+</div>
