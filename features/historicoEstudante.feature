@@ -11,7 +11,15 @@ Funcionalidade: Exportação em PDF do Histórico do Estudante
         Quando ele clica no botão "Exportar"
         E seleciona o formato "PDF"
         Então o sistema deve fazer o download de um arquivo chamado "extrato_refeicoes.pdf"
-    
+
+    Cenário: Visualização e exportação do extrato apenas com recargas
+        Dado que o estudante acessa a página de "Histórico de Refeições"
+        E possui apenas recargas confirmadas sem nenhuma refeição registrada
+        Então ele deve visualizar as recargas no extrato
+        Quando ele clica no botão "Exportar"
+        E seleciona o formato "PDF"
+        Então o sistema deve fazer o download de um arquivo chamado "extrato_refeicoes.pdf"
+
     Cenário: Tentativa de exportação de um histórico sem registros
         Dado que o estudante acessou o histórico sem nenhuma refeição registrada
         Quando ele clica no botão "Exportar"

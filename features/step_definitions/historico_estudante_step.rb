@@ -40,8 +40,9 @@ Dado(/^possui registros de refeições no mês atual$/) do
     f.ativo = true
   end
 
-  sessao = SessaoOperacao.find_by(catraca: catraca, encerrada_em: nil) ||
-           SessaoOperacao.create!(catraca: catraca, funcionario: funcionario, iniciada_em: Time.current)
+  SessaoOperacao.where(funcionario: funcionario, encerrada_em: nil).update_all(encerrada_em: Time.current)
+  SessaoOperacao.where(catraca: catraca, encerrada_em: nil).update_all(encerrada_em: Time.current)
+  sessao = SessaoOperacao.create!(catraca: catraca, funcionario: funcionario, iniciada_em: Time.current)
 
   Acesso.create!(
     sessao_operacao: sessao,
@@ -55,6 +56,30 @@ Dado(/^possui registros de refeições no mês atual$/) do
   )
 
   visit historico_refeicoes_path
+end
+
+Dado(/^possui apenas recargas confirmadas sem nenhuma refeição registrada$/) do
+  Acesso.where(estudante: @estudante).delete_all
+  Recarga.where(estudante: @estudante).delete_all
+  @estudante.update!(saldo: 0.0)
+
+  Recarga.create!(
+    estudante: @estudante,
+    valor: 30.0,
+    metodo_pagamento: :pix,
+    status: :confirmada,
+    solicitada_em: 10.minutes.ago,
+    confirmada_em: Time.current,
+    codigo_transacao: "TRX-BDD-#{SecureRandom.hex(4)}"
+  )
+
+  visit historico_refeicoes_path
+end
+
+Então(/^ele deve visualizar as recargas no extrato$/) do
+  expect(page).to have_content('RECARGA')
+  expect(page).to have_content('Total Recarregado')
+  expect(page).not_to have_content('Nenhuma movimentação encontrada')
 end
 
 Quando(/^ele clica no botão "([^"]*)"$/) do |botao|
@@ -78,6 +103,10 @@ Dado(/^que o estudante acessou o histórico sem nenhuma refeição registrada$/)
     e.senha_hash = 'hash'
     e.grupo_tarifario = grupo
   end
+
+  Acesso.where(estudante: @estudante).delete_all
+  Recarga.where(estudante: @estudante).delete_all
+  @estudante.update!(saldo: 0.0)
 
   visit test_login_path(@estudante.id)
   visit historico_refeicoes_path
