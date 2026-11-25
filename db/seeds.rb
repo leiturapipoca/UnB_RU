@@ -6,6 +6,7 @@
 # Logins de teste dos funcionários (senha de todos: senha123):
 #   Administrador  SIAPE 1000001  -> pode gerenciar restaurantes e catracas
 #   Operador       SIAPE 1000002  -> opera a catraca
+#   Gestor         SIAPE 1000003  -> turnos, relatório de operação e relatório global
 
 require 'json'
 
@@ -26,7 +27,8 @@ if Rails.env.production?
 else
   [
     { siape: "1000001", nome: "Administrador RU", perfil: :administrador },
-    { siape: "1000002", nome: "Operador RU", perfil: :operador }
+    { siape: "1000002", nome: "Operador RU", perfil: :operador },
+    { siape: "1000003", nome: "Gestor RU", perfil: :gestor }
   ].each do |dados|
     Funcionario.find_or_create_by!(siape: dados[:siape]) do |f|
       f.nome = dados[:nome]
