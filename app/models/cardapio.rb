@@ -17,7 +17,7 @@ class Cardapio < ApplicationRecord
     turno_ativo = Turno.find_by("hora_inicio <= :hora AND hora_fim >= :hora", hora: horario_formatado)
 
     return nil unless turno_ativo
-
+    # agr q ele tem a data e o turno procura qual o caradpio daquele dia
     find_by(turno_id: turno_ativo.id, data: data_atual)
   end
 end

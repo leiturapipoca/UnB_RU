@@ -1,4 +1,4 @@
-<%# Quando não há refeição, a própria tela mostra a mensagem do flash; o layout não repete %>
+<%# se o cardapio for nil a tela dá o flash, n sei se isso é uma boa pratica %>
 <% content_for :flash_renderizado, "sim" %>
 <div class="pagina pagina--estreita">
   <% if @cardapio.nil? %>

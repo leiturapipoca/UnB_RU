@@ -12,13 +12,16 @@ class Estudante < ApplicationRecord
   validates :notificacoes_ativas, inclusion: { in: [ true, false ] }
 
   def senha_confere?(texto)
+    #confere o hash sem descriptografar
     BCrypt::Password.new(senha_hash) == texto
   rescue BCrypt::Errors::InvalidHash
     false
   end
 
   def self.autenticar(matricula, senha)
+    #e strip tira espaço em branco
     estudante = find_by(matricula: matricula.to_s.strip)
+    # o & garante que só busca se o objeto n for nil
     estudante if estudante&.senha_confere?(senha.to_s)
   end
 end
