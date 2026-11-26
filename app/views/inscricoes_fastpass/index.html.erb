@@ -6,10 +6,6 @@
       <p>Acompanhe os sorteios em que você se inscreveu e o código do seu passe.</p>
     </div>
     <div class="cabecalho-pagina__acoes">
-      <%= button_to (current_estudante.notificacoes_ativas? ? "Bloquear notificações" : "Ativar notificações"),
-                    alternar_notificacoes_fastpass_path,
-                    method: :patch,
-                    form: { data: { turbo: false } } %>
       <%= link_to nova_inscricao_fastpass_path, class: "botao" do %><%= icone :mais %> Nova Inscrição FastPass<% end %>
     </div>
   </div>

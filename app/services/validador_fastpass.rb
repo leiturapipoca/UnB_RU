@@ -36,8 +36,8 @@ class ValidadorFastpass
     return true unless turno.trava_pontualidade
 
     agora  = @momento.seconds_since_midnight
-    inicio = janela.hora_inicio.seconds_since_midnight - turno.antecedencia_min * 60
-    fim    = janela.hora_fim.seconds_since_midnight + turno.tolerancia_atraso_min * 60
+    inicio = janela.hora_inicio.seconds_since_midnight - turno.antecedencia_min.to_i * 60
+    fim    = janela.hora_fim.seconds_since_midnight + turno.tolerancia_atraso_min.to_i * 60
     agora.between?(inicio, fim)
   end
 
@@ -75,7 +75,7 @@ class ValidadorFastpass
 
   # Ponto de integração com a catraca física. Por enquanto só registra no log.
   def comandar_catraca(acao)
-    Rails.logger.info("[Catraca #{@sessao.catraca.numero}] #{acao.to_s.upcase}")
+    Rails.logger.info("[Catraca #{@sessao&.catraca&.numero || 'sem_catraca'}] #{acao.to_s.upcase}")
   end
 
   def motivo_do_erro(mensagem)
@@ -83,8 +83,6 @@ class ValidadorFastpass
       :saldo_insuficiente
     elsif mensagem.include?("Entrada")
       :entrada_ja_registrada
-    elsif mensagem.include?("não é do campus")
-      :fora_do_turno
     end
   end
 end
