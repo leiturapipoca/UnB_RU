@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EstudantesController < ApplicationController
+  #definir extrato de estudante será sempre executado antes das actions do array de symbols
   before_action :definir_estudante_extrato, only: %i[extrato historico exportar_historico]
 
   def new
@@ -13,18 +14,20 @@ class EstudantesController < ApplicationController
 
     @estudante.grupo_tarifario = GrupoTarifario.first || GrupoTarifario.create!(nome: "Padrão")
 
-
+    #  [retorna os parametros do forms -> pega os valores ignorando a key -> all?
+    # diz se atendem as soluções -> ve se algum ta vazio]
     if estudante_params.values.all?(&:blank?)
       flash.now[:alert] = "Preencha todos os campos"
       render :new, status: :unprocessable_entity
       return
     end
 
-    # Guarda só o hash da senha (BCrypt), nunca o texto digitado
+    # guarda o hash da senha
     @estudante.senha_hash = BCrypt::Password.create(@estudante.senha_hash) if @estudante.senha_hash.present?
 
     if @estudante.save
       redirect_to new_estudante_path, notice: "Usuário cadastrado com sucesso"
+      #include? procura se existe esse erro no array de erros de matricula
     else
       if @estudante.errors[:matricula].include?("has already been taken") || @estudante.errors[:matricula].include?("já está em uso")
         flash.now[:alert] = "Estudante já cadastrado"
@@ -75,6 +78,8 @@ class EstudantesController < ApplicationController
 
   private
 
+  # Strongparams: exige que exista key estudante nos params, permit diz oq pode receber
+  # evita uma requisicao com parametros errados (tipo adm true)
   def estudante_params
     params.require(:estudante).permit(:matricula, :nome, :senha_hash)
   end

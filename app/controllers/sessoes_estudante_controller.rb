@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SessoesEstudanteController < ApplicationController
-  # Traz exigir_login_estudante; sem este include o "Sair" do estudante quebrava
+  #exigir_login_estudante se n tiver include o sair do estudante quebra
   include AutenticacaoEstudante
 
   before_action :exigir_login_estudante, only: :destroy
