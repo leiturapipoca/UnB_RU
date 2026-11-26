@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_estudante
+  helper_method :current_estudante, :fastpass_popup_pendente
 
   if Rails.env.development?
     require "active_support/testing/time_helpers"
@@ -39,5 +39,23 @@ class ApplicationController < ActionController::Base
     else
       yield
     end
+  end
+
+  def fastpass_popup_pendente
+    return nil unless current_estudante
+    return nil if current_estudante.respond_to?(:notificacoes_ativas?) && !current_estudante.notificacoes_ativas?
+
+    vistos = cookies[:fastpass_popup_vistos].to_s.split(",").map(&:to_i)
+
+    scope = InscricaoFastpass
+      .status_contemplado
+      .includes(:janela_fastpass, sorteio: :turno)
+      .where(estudante_id: current_estudante.id)
+      .where("notificado_em IS NULL OR sorteios.data >= ?", Date.current)
+      .references(:sorteios)
+      .order(id: :desc)
+
+    scope = scope.where.not(id: vistos) if vistos.any?
+    @fastpass_popup_pendente ||= scope.first
   end
 end

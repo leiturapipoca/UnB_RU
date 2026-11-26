@@ -1,0 +1,75 @@
+<% if (inscricao = fastpass_popup_pendente) %>
+  <% turno = inscricao.sorteio.turno %>
+  <% janela = inscricao.janela_fastpass %>
+  <% nome_turno = InscricoesFastpassController::TURNO_LABELS[turno.tipo_refeicao] || turno.tipo_refeicao %>
+
+  <div id="modal-fastpass"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-fastpass-titulo"
+       style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 14px; padding: 24px; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25); border-top: 5px solid #003366;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <span class="etiqueta"><%= icone :bilhete, tamanho: 14 %> FastPass Contemplado</span>
+        <%= button_to "✕",
+                      dispensar_popup_inscricao_fastpass_path(inscricao),
+                      method: :patch,
+                      form: { id: "form-fechar-popup-fastpass", data: { turbo: false } },
+                      aria: { label: "Fechar aviso" },
+                      style: "background: transparent; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; padding: 4px 8px;" %>
+      </div>
+
+      <h2 id="modal-fastpass-titulo" style="margin: 0 0 8px; font-size: 1.3rem; color: #0f172a;">
+        Você recebeu um FastPass!
+      </h2>
+      <p style="margin: 0 0 16px; color: #475569; font-size: 0.95rem;">
+        Sua inscrição foi contemplada no sorteio. Apresente o código abaixo na catraca dentro do horário da janela:
+      </p>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.92rem;">
+          <span style="color: #64748b;">Turno:</span>
+          <strong style="color: #0f172a;"><%= nome_turno %></strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.92rem;">
+          <span style="color: #64748b;">Data:</span>
+          <strong style="color: #0f172a;"><%= inscricao.sorteio.data.strftime("%d/%m/%Y") %></strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.92rem;">
+          <span style="color: #64748b;">Time-frame:</span>
+          <strong style="color: #0f172a;"><%= "#{janela.hora_inicio.strftime('%H:%M')} - #{janela.hora_fim.strftime('%H:%M')}" %></strong>
+        </div>
+        <div style="text-align: center; background: #eff6ff; border: 1px dashed #93c5fd; border-radius: 8px; padding: 10px;">
+          <span style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #1e40af; margin-bottom: 2px;">
+            Código do Passe
+          </span>
+          <strong style="font-size: 1.25rem; letter-spacing: 0.08em; color: #003366;">
+            <%= inscricao.codigo_passe %>
+          </strong>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <%= button_to "Fechar",
+                      dispensar_popup_inscricao_fastpass_path(inscricao),
+                      method: :patch,
+                      form: { data: { turbo: false } },
+                      style: "background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" %>
+        <%= button_to "Ver meus passes",
+                      dispensar_popup_inscricao_fastpass_path(inscricao, ir_para_passes: 1),
+                      method: :patch,
+                      form: { data: { turbo: false } },
+                      class: "botao" %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        var form = document.getElementById("form-fechar-popup-fastpass");
+        if (form) form.submit();
+      }
+    }, { once: true });
+  </script>
+<% end %>

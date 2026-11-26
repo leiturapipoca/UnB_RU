@@ -51,6 +51,21 @@ class InscricoesFastpassController < ApplicationController
     render :new, status: :unprocessable_content
   end
 
+  def dispensar_popup
+    inscricao = InscricaoFastpass.find_by!(id: params[:id], estudante_id: current_estudante.id)
+    inscricao.update!(notificado_em: Time.current) if inscricao.notificado_em.nil?
+
+    vistos = cookies[:fastpass_popup_vistos].to_s.split(",").map(&:to_i)
+    vistos << inscricao.id unless vistos.include?(inscricao.id)
+    cookies.permanent[:fastpass_popup_vistos] = vistos.join(",")
+
+    if params[:ir_para_passes].present?
+      redirect_to inscricoes_fastpass_path
+    else
+      redirect_back fallback_location: inscricoes_fastpass_path
+    end
+  end
+
   private
 
   def autenticar_estudante!
