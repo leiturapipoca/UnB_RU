@@ -18,9 +18,13 @@ class AcessosController < ApplicationController
       return
     end
 
-    sessao = SessaoOperacao.where(encerrada_em: nil).first
+    sessao = sessao_operacao_atual || SessaoOperacao.where(encerrada_em: nil).order(id: :desc).first
     horario_atual = Time.current.strftime("%H:%M:%S")
-    turno = Turno.where("hora_inicio <= ? AND hora_fim >= ?", horario_atual, horario_atual).first
+
+    campus_id = sessao&.catraca&.restaurante&.campus_id
+    turnos_scope = Turno.where("hora_inicio <= ? AND hora_fim >= ?", horario_atual, horario_atual)
+    turnos_scope = turnos_scope.where(campus_id: campus_id) if campus_id.present?
+    turno = turnos_scope.first
 
     if turno.nil?
       flash.now[:alert] = "Fora do horário de atendimento"
@@ -49,14 +53,19 @@ class AcessosController < ApplicationController
       if acesso.save
         flash.now[:notice] = "Catraca Liberada"
         render :new, status: :ok
+      else
+        flash.now[:alert] = "Erro ao processar acesso: #{acesso.errors.full_messages.to_sentence}"
+        render :new, status: :unprocessable_content
       end
     rescue ActiveRecord::StatementInvalid => e
+      motivo_pg = e.cause&.message&.lines&.first&.sub(/^ERROR:\s*/, "")&.strip
+
       if e.message.include?("Saldo insuficiente")
         flash.now[:alert] = "Acesso Não Autorizado"
       elsif e.message.include?("Entrada já registrada")
         flash.now[:alert] = "Entrada já registrada"
       else
-        flash.now[:alert] = "Erro ao processar acesso"
+        flash.now[:alert] = motivo_pg.present? ? "Erro ao processar acesso: #{motivo_pg}" : "Erro ao processar acesso"
       end
       render :new, status: :unprocessable_content
     end
